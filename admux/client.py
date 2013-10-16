@@ -153,6 +153,19 @@ class Client(object):
         return self._request('GET', url, params=params)
 
 
+    def orders(self, links=None, expand=None):
+        """
+        links: Boolean
+        expand: array of strings
+        """
+        url = '/orders'
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
+
 
 if __name__ == '__main__':
     ch = logging.StreamHandler()

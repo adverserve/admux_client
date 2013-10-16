@@ -14,6 +14,7 @@ class BaseTest(TestCase):
     api_key = "C96A2442-1322-11E3-9E33-96237FA36B44"
     website_id = "67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
     placement_id = "953E93A6-0968-11E3-877B-F091A39B799E"
+    order_id = "F01CD8A0-3596-11E3-8D31-B4305DD555A5"
 
     def setUp(self):
         self.api = Client()
@@ -201,3 +202,44 @@ class PlacementsTest(BaseTest):
             data = api.placement(uuid=self.placement_id)
             self.assertTrue('uuid' in data)
             self.assertEquals(self.placement_id, data['uuid'])
+
+
+class OrdersTest(BaseTest):
+
+    def setUp(self):
+        super(OrdersTest, self).setUp()
+        self._login()
+
+    @httpretty.activate
+    def test_list(self):
+        body = '' \
+            '''
+            {
+                "orders": [
+                    {
+                        "adition_id": "109522",
+                        "agency_id": "40125",
+                        "campaigns": [
+                            "http://admux-demo.trust-box.at/v1/campaigns/F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+                        ],
+                        "client_id": null,
+                        "created": "2013-10-15T12:40:14.000000",
+                        "name": "STRG",
+                        "updated": "2013-10-16T06:57:52.000000",
+                        "uuid": "F01CD8A0-3596-11E3-8D31-B4305DD555A5"
+                    }
+                ]
+            }
+
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/orders"),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.orders()
+        self.assertTrue('orders' in data)
