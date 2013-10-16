@@ -140,7 +140,7 @@ class Client(object):
 
     def placement(self, uuid, links=None, expand=None):
         """
-        uuid: website identifier
+        uuid: placement identifier
         links: Boolean
         expand: array of strings
         """
