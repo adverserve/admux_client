@@ -2,6 +2,7 @@
 import logging
 log = logging.getLogger(__name__)
 
+import json
 import requests
 
 
@@ -32,6 +33,11 @@ class Client(object):
 
         headers = dict(headers or {})
         headers.update(self.default_headers)
+
+
+        if data:
+            # converting to json
+            data = json.dumps(data)
 
         absolute_url = Client.get_url(url)
 
