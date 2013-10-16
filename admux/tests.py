@@ -36,7 +36,7 @@ class BaseTest(TestCase):
             body='{ "api_key" : "%s" }' % self.api_key,
             content_type="application/json"
         )
-        return self.api.login('strg', 'strg')
+        return self.api.login(u'strg', u'strg')
 
 
 
@@ -57,8 +57,8 @@ class BasicTest(BaseTest):
 
         key = api.login('strg', 'strg')
 
-        self.assertEqual("C96A2442-1322-11E3-9E33-96237FA36B44", key)
-        self.assertEqual("C96A2442-1322-11E3-9E33-96237FA36B44", api.api_key)
+        self.assertEqual(u"C96A2442-1322-11E3-9E33-96237FA36B44", key)
+        self.assertEqual(u"C96A2442-1322-11E3-9E33-96237FA36B44", api.api_key)
 
 
 class WebsitesTest(BaseTest):
@@ -104,10 +104,10 @@ class WebsitesTest(BaseTest):
         )
 
         data = api.websites()
-        self.assertTrue('websites' in data)
+        self.assertTrue(u'websites' in data)
 
-        data = api.websites(links=True, expand=[ 'placements', ])
-        self.assertTrue('websites' in data)
+        data = api.websites(links=True, expand=[ u'placements', ])
+        self.assertTrue(u'websites' in data)
 
         self.assertEqual(httpretty.last_request().querystring,
                          { u'links': [ u'1', ],
@@ -143,12 +143,12 @@ class WebsitesTest(BaseTest):
         )
 
         data = api.website(uuid=self.website_id)
-        self.assertTrue('uuid' in data)
-        self.assertEqual(self.website_id, data['uuid'])
+        self.assertTrue(u'uuid' in data)
+        self.assertEqual(self.website_id, data[u'uuid'])
 
         data = api.website(uuid=self.website_id,
-                           links=True, expand=[ 'placements', ])
-        self.assertTrue('uuid' in data)
+                           links=True, expand=[ u'placements', ])
+        self.assertTrue(u'uuid' in data)
 
 
 class PlacementsTest(BaseTest):
@@ -185,7 +185,7 @@ class PlacementsTest(BaseTest):
         )
 
         data = api.placements(uuid=self.website_id)
-        self.assertTrue('placements' in data)
+        self.assertTrue(u'placements' in data)
 
 
         @httpretty.activate
@@ -213,8 +213,8 @@ class PlacementsTest(BaseTest):
             )
 
             data = api.placement(uuid=self.placement_id)
-            self.assertTrue('uuid' in data)
-            self.assertEquals(self.placement_id, data['uuid'])
+            self.assertTrue(u'uuid' in data)
+            self.assertEquals(self.placement_id, data[u'uuid'])
 
 
 class OrdersTest(BaseTest):
@@ -255,7 +255,7 @@ class OrdersTest(BaseTest):
         )
 
         data = api.orders()
-        self.assertTrue('orders' in data)
+        self.assertTrue(u'orders' in data)
 
 
     @httpretty.activate
@@ -283,8 +283,8 @@ class OrdersTest(BaseTest):
         )
 
         data = api.order(uuid=self.order_id)
-        self.assertTrue('uuid' in data)
-        self.assertEquals(self.order_id, data['uuid'])
+        self.assertTrue(u'uuid' in data)
+        self.assertEquals(self.order_id, data[u'uuid'])
 
 
     @httpretty.activate
@@ -307,7 +307,7 @@ class OrdersTest(BaseTest):
 
         data = api.order_delete(uuid=self.order_id)
         self.assertTrue(u'message' in data)
-        self.assertEquals(u'Deleted', data['message'])
+        self.assertEquals(u'Deleted', data[u'message'])
 
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
@@ -333,7 +333,7 @@ class OrdersTest(BaseTest):
 
         data = api.order_create(name=self.order_name)
         self.assertTrue(u'order' in data)
-        self.assertEquals(self.order_id, data['order'])
+        self.assertEquals(self.order_id, data[u'order'])
 
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
@@ -344,7 +344,7 @@ class OrdersTest(BaseTest):
                                 agency_id=self.agency_id,
                                 client_id=self.client_id)
         self.assertTrue(u'order' in data)
-        self.assertEquals(self.order_id, data['order'])
+        self.assertEquals(self.order_id, data[u'order'])
 
         request_body = httpretty.last_request().body
         request_body = json.loads(request_body)
