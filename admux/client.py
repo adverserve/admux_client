@@ -86,9 +86,15 @@ class Client(object):
         resp.raise_for_status()
         return resp.json()
 
-
+    # Login
+    # =====
     def login(self, username, password):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/post/login/
+
+        username: Username
+        password: Password
+
         returns the api_key for given login-credentials
         (also sets the api_key as an internal variable)
         """
@@ -103,8 +109,12 @@ class Client(object):
         return self.api_key
 
 
+    # Websites
+    # ========
     def websites(self, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/websites/
+
         links: Boolean
         expand: array of strings
         """
@@ -118,6 +128,8 @@ class Client(object):
 
     def website(self, uuid, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/websites/uuid/
+
         uuid: website identifier
         links: Boolean
         expand: array of strings
@@ -131,8 +143,12 @@ class Client(object):
         return self._request('GET', url, params=params)
 
 
+    # Placements
+    # ==========
     def placements(self, uuid, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/websites/uuid/placements/
+
         uuid: website identifier
         links: Boolean
         expand: array of strings
@@ -147,6 +163,8 @@ class Client(object):
 
     def placement(self, uuid, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/placements/uuid/
+
         uuid: placement identifier
         links: Boolean
         expand: array of strings
@@ -160,8 +178,12 @@ class Client(object):
         return self._request('GET', url, params=params)
 
 
+    # Orders
+    # ======
     def orders(self, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/orders/
+
         links: Boolean
         expand: array of strings
         """
@@ -175,6 +197,8 @@ class Client(object):
 
     def order(self, uuid, links=None, expand=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/get/orders/uuid/
+
         uuid: order identifier
         links: Boolean
         expand: array of strings
@@ -189,6 +213,8 @@ class Client(object):
 
     def order_delete(self, uuid):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/delete/orders/uuid/
+
         uuid: order identifier
         """
         url = '/orders/%(uuid)s' % { 'uuid': uuid, }
@@ -197,6 +223,8 @@ class Client(object):
     def order_create(self, name,
                      adition_id=None, agency_id=None, client_id=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/post/orders/
+
         name: order name
         adition_id: optional numeric id
         agency_id: optional numeric id
@@ -216,6 +244,8 @@ class Client(object):
                      name=None,
                      adition_id=None, agency_id=None, client_id=None):
         """
+        http://admux-demo.trust-box.at/developer/api/v1/put/orders/uuid/
+
         uuid: order identifier
         name: optional order name
         adition_id: optional numeric id
