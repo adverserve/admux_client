@@ -166,6 +166,20 @@ class Client(object):
 
         return self._request('GET', url, params=params)
 
+    def order(self, uuid, links=None, expand=None):
+        """
+        uuid: order identifier
+        links: Boolean
+        expand: array of strings
+        """
+        url = '/orders/%(uuid)s' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
+
 
 if __name__ == '__main__':
     ch = logging.StreamHandler()

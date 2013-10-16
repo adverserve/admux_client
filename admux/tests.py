@@ -243,3 +243,31 @@ class OrdersTest(BaseTest):
 
         data = api.orders()
         self.assertTrue('orders' in data)
+
+
+    def test_detail(self):
+        body = '' \
+            '''
+            {
+                "adition_id": "2566638",
+                "created": "2013-08-20T07:17:33.000000",
+                "height": 5,
+                "name": "kurier_sport_advertorial",
+                "type": "teaser",
+                "updated": "2013-08-20T07:17:33.000000",
+                "uuid": "953E93A6-0968-11E3-877B-F091A39B799E",
+                "width": 5
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/orders/%s" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.order(uuid=self.order_id)
+        self.assertTrue('uuid' in data)
+        self.assertEquals(self.order_id, data['uuid'])
