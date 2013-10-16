@@ -1,6 +1,8 @@
 """
 Run "manage.py test"
 """
+import logging
+log = logging.getLogger(__name__)
 
 import httpretty
 
