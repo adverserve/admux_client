@@ -128,7 +128,7 @@ class WebsitesTest(BaseTest):
 
         httpretty.register_uri(
             httpretty.GET,
-            Client.get_url("/website/%s" % self.website_id),
+            Client.get_url("/websites/%s" % self.website_id),
             body=body,
             content_type="application/json"
         )
@@ -170,7 +170,7 @@ class PlacementsTest(BaseTest):
 
         httpretty.register_uri(
             httpretty.GET,
-            Client.get_url("/website/%s/placements" % self.website_id),
+            Client.get_url("/websites/%s/placements" % self.website_id),
             body=body,
             content_type="application/json"
         )
