@@ -95,3 +95,8 @@ class WebsitesTest(BaseTest):
         data = api.websites(links=True, expand=[ 'placements', ])
         self.assertTrue('websites' in data)
 
+        self.assertEqual(httpretty.last_request().querystring,
+                         { u'links': [ u'1', ],
+                           u'expand': [ u'placements', ] })
+
+
