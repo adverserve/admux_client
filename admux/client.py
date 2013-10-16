@@ -76,6 +76,22 @@ class Client(object):
 
         return self.api_key
 
+    def websites(self, links=None, expand=None):
+        """
+        links: Boolean
+        expand: array of strings
+        """
+        params = {}
+
+        if links:
+            params['links'] = 1
+
+        if expand:
+            expand = ",".join(expand)
+            params['expand'] = expand
+
+        return self._request('GET', '/websites', params=params)
+
 
 
 if __name__ == '__main__':
