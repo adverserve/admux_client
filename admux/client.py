@@ -67,7 +67,7 @@ class Client(object):
         (also sets the api_key as an internal variable)
         """
 
-        data = self._request('POST', '/login', params={
+        data = self._request('POST', '/login', data={
             'username' : username,
             'password' : password,
         }, requires_api_key=False)
