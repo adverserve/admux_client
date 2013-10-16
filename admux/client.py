@@ -109,7 +109,6 @@ class Client(object):
 
         return self._request('GET', url, params=params)
 
-
     def website(self, uuid, links=None, expand=None):
         """
         uuid: website identifier
@@ -117,6 +116,35 @@ class Client(object):
         expand: array of strings
         """
         url = '/websites/%(uuid)s' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
+
+
+    def placements(self, uuid, links=None, expand=None):
+        """
+        uuid: website identifier
+        links: Boolean
+        expand: array of strings
+        """
+        url = '/websites/%(uuid)s/placements' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
+
+    def placement(self, uuid, links=None, expand=None):
+        """
+        uuid: website identifier
+        links: Boolean
+        expand: array of strings
+        """
+        url = '/placements/%(uuid)s' % { 'uuid': uuid, }
         params = {
             'links': Client._bool(links),
             'expand': Client._list(expand),
@@ -145,7 +173,7 @@ if __name__ == '__main__':
         data = c.websites()
 
         website_uuid = data.get('websites', [ {}, ])[0].get('uuid')
-        pprint(c.website(website_uuid))
+        pprint(c.placement("953E93A6-0968-11E3-877B-F091A39B799E"))
 
     except requests.exceptions.HTTPError, e:
         log.error('Request failed.')
