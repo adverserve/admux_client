@@ -24,7 +24,7 @@ class BaseTest(TestCase):
         httpretty.register_uri(
             httpretty.POST,
             Client.get_url("/login"),
-            body='{ "api_key" : %s }' % self.api_key,
+            body='{ "api_key" : "%s" }' % self.api_key,
             content_type="application/json"
         )
         return self.api.login('strg', 'strg')
