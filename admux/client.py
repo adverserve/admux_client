@@ -4,6 +4,7 @@ log = logging.getLogger(__name__)
 
 import json
 import requests
+from pprint import pprint
 
 
 class ProtocolError(Exception):
@@ -109,7 +110,19 @@ class Client(object):
         return self._request('GET', url, params=params)
 
 
+    def website(self, uuid, links=None, expand=None):
+        """
+        uuid: website identifier
+        links: Boolean
+        expand: array of strings
+        """
+        url = '/websites/%(uuid)s' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
 
+        return self._request('GET', url, params=params)
 
 
 
@@ -128,6 +141,11 @@ if __name__ == '__main__':
     c = Client()
     try:
         c.login(username='strg', password='strg')
-        print c.websites()
+
+        data = c.websites()
+
+        website_uuid = data.get('websites', [ {}, ])[0].get('uuid')
+        pprint(c.website(website_uuid))
+
     except requests.exceptions.HTTPError, e:
         log.error('Request failed.')

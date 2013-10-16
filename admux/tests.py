@@ -100,3 +100,39 @@ class WebsitesTest(BaseTest):
                            u'expand': [ u'placements', ] })
 
 
+    def test_detail(self):
+        detail_body = '' \
+            '''
+            {
+                "adition_id": "38855",
+                "advertorial_base_url": null,
+                "created": "2013-08-20T07:16:17.000000",
+                "name": "kurier",
+                "placements": [
+                    "http://admux-demo.trust-box.at/v1/placements/94DA4392-0968-11E3-8AE3-B86E7401D844",
+                    "http://admux-demo.trust-box.at/v1/placements/953E93A6-0968-11E3-877B-F091A39B799E",
+                    "http://admux-demo.trust-box.at/v1/placements/9577B046-0968-11E3-9A0D-B663F9BB9596",
+                    "http://admux-demo.trust-box.at/v1/placements/976BB26C-0968-11E3-9AD2-C0060CC2BC6A"
+                ],
+                "updated": "2013-08-20T07:16:17.000000",
+                "uuid": "67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
+            }
+            '''
+        api = self.api
+
+        website_id = '67D02286-0968-11E3-B1D1-9E6D76D7A1E6'
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/website/%s" % website_id),
+            body=detail_body,
+            content_type="application/json"
+        )
+
+        data = api.website(uuid=website_id)
+        self.assertTrue('uuid' in data)
+        self.assertEqual(website_id, data['uuid'])
+
+        data = api.website(uuid=website_id,
+                           links=True, expand=[ 'placements', ])
+        self.assertTrue('uuid' in data)
