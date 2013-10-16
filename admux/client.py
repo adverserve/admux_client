@@ -27,12 +27,16 @@ class Client(object):
                  params=None, data=None, headers=None,
                  *args, **kwargs):
 
+        headers = dict(headers or {})
+        headers.update(self.default_headers)
+
+
         if requires_api_key and not self.api_key:
             raise ProtocolError("API Key not set for client session. ' \
             'Try calling `login()` first.")
 
-        headers = dict(headers or {})
-        headers.update(self.default_headers)
+        if self.api_key:
+            headers['Api-Key'] = self.api_key
 
 
         if data:
