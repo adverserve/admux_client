@@ -51,7 +51,10 @@ class BasicTest(BaseTest):
 
 
 class WebsitesTest(BaseTest):
-    list_body = '' \
+
+    @httpretty.activate
+    def test_list(self):
+        list_body = '' \
             '''
             {
                 "websites" : [
@@ -77,14 +80,12 @@ class WebsitesTest(BaseTest):
             }
             '''
 
-    @httpretty.activate
-    def test_list(self):
         api = self.api
 
         httpretty.register_uri(
             httpretty.GET,
             Client.get_url("/websites"),
-            body=self.list_body,
+            body=list_body,
             content_type="application/json"
         )
 
