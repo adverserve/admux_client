@@ -4,6 +4,7 @@ Run "manage.py test"
 import logging
 log = logging.getLogger(__name__)
 
+import json
 import httpretty
 
 from django.test import TestCase
@@ -17,6 +18,10 @@ class BaseTest(TestCase):
     placement_id = "953E93A6-0968-11E3-877B-F091A39B799E"
     order_id = "F01CD8A0-3596-11E3-8D31-B4305DD555A5"
     order_name = "test-order"
+    adition_id = 24
+    agency_id = 25
+    client_id = 26
+
     job_id = "CA5434B0-1322-11E3-9E33-96237FA36B44"
 
     def setUp(self):
@@ -331,3 +336,18 @@ class OrdersTest(BaseTest):
 
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
+
+        data = api.order_create(name=self.order_name,
+
+                                adition_id=self.adition_id,
+                                agency_id=self.agency_id,
+                                client_id=self.client_id)
+        self.assertTrue(u'order' in data)
+        self.assertEquals(self.order_id, data['order'])
+
+        request_body = httpretty.last_request().body
+        request_body = json.loads(request_body)
+
+        self.assertTrue(u'adition_id' in request_body)
+        self.assertTrue(u'agency_id' in request_body)
+        self.assertTrue(u'client_id' in request_body)
