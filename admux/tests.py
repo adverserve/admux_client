@@ -11,21 +11,21 @@ from django.test import TestCase
 from adserver.client import Client
 
 class BaseTest(TestCase):
-    test_api_key = "C96A2442-1322-11E3-9E33-96237FA36B44"
+    api_key = "C96A2442-1322-11E3-9E33-96237FA36B44"
+    website_id = "67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
+    placement_id = "953E93A6-0968-11E3-877B-F091A39B799E"
 
     def setUp(self):
         self.api = Client()
 
+    def _login(self):
         httpretty.register_uri(
             httpretty.POST,
             Client.get_url("/login"),
-            body='{ "api_key" : %s }' % self.test_api_key,
+            body='{ "api_key" : %s }' % self.api_key,
             content_type="application/json"
         )
-        self.api.login('strg', 'strg')
-
-        # initializing client without logging in
-        self.fresh_api = Client()
+        return self.api.login('strg', 'strg')
 
 
 
@@ -33,7 +33,7 @@ class BasicTest(BaseTest):
 
     @httpretty.activate
     def test_login(self):
-        api = self.fresh_api
+        api = self.api
 
         self.assertIsNone(api.api_key)
 
@@ -52,9 +52,13 @@ class BasicTest(BaseTest):
 
 class WebsitesTest(BaseTest):
 
+    def setUp(self):
+        super(WebsitesTest, self).setUp()
+        self._login()
+
     @httpretty.activate
     def test_list(self):
-        list_body = '' \
+        body = '' \
             '''
             {
                 "websites" : [
@@ -79,13 +83,12 @@ class WebsitesTest(BaseTest):
                 ]
             }
             '''
-
         api = self.api
 
         httpretty.register_uri(
             httpretty.GET,
             Client.get_url("/websites"),
-            body=list_body,
+            body=body,
             content_type="application/json"
         )
 
@@ -101,7 +104,7 @@ class WebsitesTest(BaseTest):
 
 
     def test_detail(self):
-        detail_body = '' \
+        body = '' \
             '''
             {
                 "adition_id": "38855",
@@ -120,19 +123,17 @@ class WebsitesTest(BaseTest):
             '''
         api = self.api
 
-        website_id = '67D02286-0968-11E3-B1D1-9E6D76D7A1E6'
-
         httpretty.register_uri(
             httpretty.GET,
-            Client.get_url("/website/%s" % website_id),
-            body=detail_body,
+            Client.get_url("/website/%s" % self.website_id),
+            body=body,
             content_type="application/json"
         )
 
-        data = api.website(uuid=website_id)
+        data = api.website(uuid=self.website_id)
         self.assertTrue('uuid' in data)
-        self.assertEqual(website_id, data['uuid'])
+        self.assertEqual(self.website_id, data['uuid'])
 
-        data = api.website(uuid=website_id,
+        data = api.website(uuid=self.website_id,
                            links=True, expand=[ 'placements', ])
         self.assertTrue('uuid' in data)
