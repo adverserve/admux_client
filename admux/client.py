@@ -91,4 +91,8 @@ if __name__ == '__main__':
     log.setLevel(logging.DEBUG)
 
     c = Client()
-    c.login(username='styria', password='styria')
+    try:
+        c.login(username='strg', password='strg')
+        print c.websites()
+    except requests.exceptions.HTTPError, e:
+        log.error('Request failed.')
