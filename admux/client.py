@@ -30,6 +30,13 @@ class Client(object):
         return values
 
     @staticmethod
+    def _int(val):
+        try:
+            return int(val)
+        except (ValueError, TypeError):
+            return None
+
+    @staticmethod
     def _bool(val):
         if val:
             return 1
@@ -186,6 +193,24 @@ class Client(object):
         """
         url = '/orders/%(uuid)s' % { 'uuid': uuid, }
         return self._request('DELETE', url)
+
+    def order_create(self, name,
+                     adition_id=None, agency_id=None, client_id=None):
+        """
+        name: order name
+        adition_id: optional numeric id
+        agency_id: optional numeric id
+        client_id: optional numeric id
+        """
+        url = '/orders'
+        data = {
+            u'name': name,
+            u'adition_id': Client._int(adition_id),
+            u'agency_id': Client._int(agency_id),
+            u'client_id': Client._int(client_id),
+        }
+
+        return self._request('POST', url, data=data)
 
 
 
