@@ -9,7 +9,7 @@ class ProtocolError(Exception):
     pass
 
 class Client(object):
-    default_base_url = 'http://admux-demo.trust-box.at/v1/'
+    default_base_url = 'http://admux-demo.trust-box.at/v1'
     default_headers = {
         'content-type': 'application/json',
     }
