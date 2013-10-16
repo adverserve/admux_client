@@ -19,6 +19,7 @@ class BaseTest(TestCase):
     def setUp(self):
         self.api = Client()
 
+    @httpretty.activate
     def _login(self):
         httpretty.register_uri(
             httpretty.POST,
@@ -104,6 +105,7 @@ class WebsitesTest(BaseTest):
                            u'expand': [ u'placements', ] })
 
 
+    @httpretty.activate
     def test_detail(self):
         body = '' \
             '''
@@ -145,6 +147,7 @@ class PlacementsTest(BaseTest):
         super(PlacementsTest, self).setUp()
         self._login()
 
+    @httpretty.activate
     def test_list(self):
         body = '' \
             '''
@@ -176,6 +179,7 @@ class PlacementsTest(BaseTest):
         self.assertTrue('placements' in data)
 
 
+        @httpretty.activate
         def test_detail(self):
             body = '' \
                 '''
@@ -245,6 +249,7 @@ class OrdersTest(BaseTest):
         self.assertTrue('orders' in data)
 
 
+    @httpretty.activate
     def test_detail(self):
         body = '' \
             '''
