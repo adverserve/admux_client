@@ -212,6 +212,25 @@ class Client(object):
 
         return self._request('POST', url, data=data)
 
+    def order_update(self, uuid,
+                     name=None,
+                     adition_id=None, agency_id=None, client_id=None):
+        """
+        uuid: order identifier
+        name: optional order name
+        adition_id: optional numeric id
+        agency_id: optional numeric id
+        client_id: optional numeric id
+        """
+        url = '/orders/%(uuid)s' % { 'uuid': uuid, }
+        data = {
+            u'name': name,
+            u'adition_id': Client._int(adition_id),
+            u'agency_id': Client._int(agency_id),
+            u'client_id': Client._int(client_id),
+        }
+
+        return self._request('PUT', url, data=data)
 
 
 if __name__ == '__main__':

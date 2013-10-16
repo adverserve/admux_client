@@ -12,17 +12,18 @@ from django.test import TestCase
 from adserver.client import Client
 
 class BaseTest(TestCase):
-    api_key = "C96A2442-1322-11E3-9E33-96237FA36B44"
+    api_key = u"C96A2442-1322-11E3-9E33-96237FA36B44"
 
-    website_id = "67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
-    placement_id = "953E93A6-0968-11E3-877B-F091A39B799E"
-    order_id = "F01CD8A0-3596-11E3-8D31-B4305DD555A5"
-    order_name = "test-order"
+    website_id = u"67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
+    placement_id = u"953E93A6-0968-11E3-877B-F091A39B799E"
+
+    order_id = u"F01CD8A0-3596-11E3-8D31-B4305DD555A5"
+    order_name = u"test-order"
     adition_id = 24
     agency_id = 25
     client_id = 26
 
-    job_id = "CA5434B0-1322-11E3-9E33-96237FA36B44"
+    job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"
 
     def setUp(self):
         self.api = Client()
@@ -351,3 +352,32 @@ class OrdersTest(BaseTest):
         self.assertTrue(u'adition_id' in request_body)
         self.assertTrue(u'agency_id' in request_body)
         self.assertTrue(u'client_id' in request_body)
+
+
+    @httpretty.activate
+    def test_update(self):
+        body = '' \
+            '''
+            {
+                "message" : "Updated",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.PUT,
+            Client.get_url("/orders/%s" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.order_update(uuid=self.order_id,
+                                name=self.order_name)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Updated', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
+
+
