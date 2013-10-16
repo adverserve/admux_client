@@ -21,29 +21,47 @@ class Client(object):
     def get_url(url):
         return '%s%s' % (Client.default_base_url, str(url))
 
+    # Argument-Helpers
+    @staticmethod
+    def _list(values):
+        if values:
+            values = ",".join(values)
+        return values
+
+    @staticmethod
+    def _bool(val):
+        if val:
+            return 1
+        return None
+
+    @staticmethod
+    def _clean_dict(dictionary):
+        return filter(lambda x: x[1] is not None, dictionary.items())
+
+    # Request-Wrapper
     def _request(self,
                  method, url,
                  requires_api_key=True,
                  params=None, data=None, headers=None,
                  *args, **kwargs):
 
+        absolute_url = Client.get_url(url)
+
         headers = dict(headers or {})
         headers.update(self.default_headers)
-
 
         if requires_api_key and not self.api_key:
             raise ProtocolError("API Key not set for client session. ' \
             'Try calling `login()` first.")
-
         if self.api_key:
             headers['Api-Key'] = self.api_key
 
+        if params:
+            params = Client._clean_dict(params)
 
         if data:
             # converting to json
             data = json.dumps(data)
-
-        absolute_url = Client.get_url(url)
 
         log.info("Adserver-Request: %s, %s", absolute_url, params)
 
@@ -76,21 +94,22 @@ class Client(object):
 
         return self.api_key
 
+
     def websites(self, links=None, expand=None):
         """
         links: Boolean
         expand: array of strings
         """
-        params = {}
+        url = '/websites'
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
 
-        if links:
-            params['links'] = 1
+        return self._request('GET', url, params=params)
 
-        if expand:
-            expand = ",".join(expand)
-            params['expand'] = expand
 
-        return self._request('GET', '/websites', params=params)
+
 
 
 
