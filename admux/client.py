@@ -180,6 +180,14 @@ class Client(object):
 
         return self._request('GET', url, params=params)
 
+    def order_delete(self, uuid):
+        """
+        uuid: order identifier
+        """
+        url = '/orders/%(uuid)s' % { 'uuid': uuid, }
+        return self._request('DELETE', url)
+
+
 
 if __name__ == '__main__':
     ch = logging.StreamHandler()

@@ -271,3 +271,29 @@ class OrdersTest(BaseTest):
         data = api.order(uuid=self.order_id)
         self.assertTrue('uuid' in data)
         self.assertEquals(self.order_id, data['uuid'])
+
+
+    @httpretty.activate
+    def test_delete(self):
+        body = '' \
+            '''
+            {
+                "message" : "Deleted",
+                "job" : "CA6E0624-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/orders/%s" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.order_delete(uuid=self.order_id)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Deleted', data['message'])
+
+        self.assertTrue(u'job' in data)
+
