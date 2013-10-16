@@ -260,7 +260,7 @@ class OrdersTest(BaseTest):
                 "name": "kurier_sport_advertorial",
                 "type": "teaser",
                 "updated": "2013-08-20T07:17:33.000000",
-                "uuid": "953E93A6-0968-11E3-877B-F091A39B799E",
+                "uuid": "F01CD8A0-3596-11E3-8D31-B4305DD555A5",
                 "width": 5
             }
             '''
