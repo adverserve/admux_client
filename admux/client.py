@@ -58,8 +58,8 @@ class Client(object):
                  resp.text)
 
         resp.raise_for_status()
-
         return resp.json()
+
 
     def login(self, username, password):
         """
