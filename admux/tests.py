@@ -143,9 +143,10 @@ class WebsitesTest(TestMixin, TestCase):
         data = api.websites(links=True, expand=[ u'placements', ])
         self.assertTrue(u'websites' in data)
 
-        self.assertEqual(httpretty.last_request().querystring,
-                         { u'links': [ u'1', ],
-                           u'expand': [ u'placements', ] })
+        if httpretty.httpretty.is_enabled():
+            self.assertEqual(httpretty.last_request().querystring,
+                             { u'links': [ u'1', ],
+                               u'expand': [ u'placements', ] })
 
 
     @fake_requests
@@ -380,12 +381,13 @@ class OrdersTest(TestMixin, TestCase):
         self.assertTrue(u'order' in data)
         self.assertEquals(self.order_id, data[u'order'])
 
-        request_body = httpretty.last_request().body
-        request_body = json.loads(request_body)
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
 
-        self.assertTrue(u'adition_id' in request_body)
-        self.assertTrue(u'agency_id' in request_body)
-        self.assertTrue(u'client_id' in request_body)
+            self.assertTrue(u'adition_id' in request_body)
+            self.assertTrue(u'agency_id' in request_body)
+            self.assertTrue(u'client_id' in request_body)
 
 
     @fake_requests
@@ -559,15 +561,16 @@ class CampaignsTest(TestMixin, TestCase):
         self.assertTrue(u'campaign' in data)
         self.assertEquals(self.campaign_id, data[u'campaign'])
 
-        request_body = httpretty.last_request().body
-        request_body = json.loads(request_body)
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
 
-        self.assertTrue(u'adition_id' in request_body)
-        self.assertTrue(u'campaign_type' in request_body)
-        self.assertTrue(u'total' in request_body)
-        self.assertTrue(u'prioriry' in request_body)
-        self.assertTrue(u'from_runtime' in request_body)
-        self.assertTrue(u'to_runtime' in request_body)
+            self.assertTrue(u'adition_id' in request_body)
+            self.assertTrue(u'campaign_type' in request_body)
+            self.assertTrue(u'total' in request_body)
+            self.assertTrue(u'prioriry' in request_body)
+            self.assertTrue(u'from_runtime' in request_body)
+            self.assertTrue(u'to_runtime' in request_body)
 
         with self.assertRaises(ValueError):
             data = api.campaign_create(uuid=self.order_id,
@@ -647,9 +650,10 @@ class CreativesTest(TestMixin, TestCase):
                              links=True, expand=[ u'clickwords', u'images', ])
         self.assertTrue(u'creatives' in data)
 
-        self.assertEqual(httpretty.last_request().querystring,
-                         { u'links': [ u'1', ],
-                           u'expand': [ u'clickwords,images', ] })
+        if httpretty.httpretty.is_enabled():
+            self.assertEqual(httpretty.last_request().querystring,
+                             { u'links': [ u'1', ],
+                               u'expand': [ u'clickwords,images', ] })
 
 
     @fake_requests
@@ -742,11 +746,12 @@ class CreativesTest(TestMixin, TestCase):
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
 
-        request_body = httpretty.last_request().body
-        request_body = json.loads(request_body)
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
 
-        self.assertTrue(u'html' in request_body)
-        self.assertTrue(u'placement' in request_body)
+            self.assertTrue(u'html' in request_body)
+            self.assertTrue(u'placement' in request_body)
 
 
     @fake_requests
@@ -822,9 +827,10 @@ class ClickwordsTest(TestMixin, TestCase):
                               links=True, expand=[ u'foo', ])
         self.assertTrue(u'clickwords' in data)
 
-        self.assertEqual(httpretty.last_request().querystring,
-                         { u'links': [ u'1', ],
-                           u'expand': [ u'foo', ] })
+        if httpretty.httpretty.is_enabled():
+            self.assertEqual(httpretty.last_request().querystring,
+                             { u'links': [ u'1', ],
+                               u'expand': [ u'foo', ] })
 
 
     @fake_requests
@@ -910,11 +916,12 @@ class ClickwordsTest(TestMixin, TestCase):
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
 
-        request_body = httpretty.last_request().body
-        request_body = json.loads(request_body)
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
 
-        self.assertTrue(u'tag' in request_body)
-        self.assertTrue(u'url' in request_body)
+            self.assertTrue(u'tag' in request_body)
+            self.assertTrue(u'url' in request_body)
 
 
     @fake_requests
@@ -993,9 +1000,10 @@ class ImagesTest(TestMixin, TestCase):
                               links=True, expand=[ u'foo', ])
         self.assertTrue(u'images' in data)
 
-        self.assertEqual(httpretty.last_request().querystring,
-                         { u'links': [ u'1', ],
-                           u'expand': [ u'foo', ] })
+        if httpretty.httpretty.is_enabled():
+            self.assertEqual(httpretty.last_request().querystring,
+                             { u'links': [ u'1', ],
+                               u'expand': [ u'foo', ] })
 
 
     @fake_requests
@@ -1091,11 +1099,12 @@ class ImagesTest(TestMixin, TestCase):
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
 
-        request_body = httpretty.last_request().body
-        request_body = json.loads(request_body)
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
 
-        self.assertTrue(u'filename' in request_body)
-        self.assertTrue(u'data' in request_body)
+            self.assertTrue(u'filename' in request_body)
+            self.assertTrue(u'data' in request_body)
 
 
     @fake_requests
@@ -1179,9 +1188,10 @@ class JobsTest(TestMixin, TestCase):
         data = api.jobs(links=True, expand=[ u'foo', ])
         self.assertTrue(u'jobs' in data)
 
-        self.assertEqual(httpretty.last_request().querystring,
-                         { u'links': [ u'1', ],
-                           u'expand': [ u'foo', ] })
+        if httpretty.httpretty.is_enabled():
+            self.assertEqual(httpretty.last_request().querystring,
+                             { u'links': [ u'1', ],
+                               u'expand': [ u'foo', ] })
 
 
     @fake_requests
