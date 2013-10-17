@@ -4,6 +4,7 @@ Run "manage.py test"
 import logging
 log = logging.getLogger(__name__)
 
+from datetime import datetime
 import json
 import httpretty
 
@@ -24,6 +25,9 @@ class BaseTest(TestCase):
     client_id = 26
 
     campaign_id = u"F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+    campaign_name = u"test-campaign"
+    campaign_type = u"closedClicks"
+    invalid_campaign_type = u"invalid"
 
     job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"
 
@@ -461,3 +465,31 @@ class CampaignsTest(BaseTest):
         data = api.campaign(uuid=self.campaign_id)
         self.assertTrue(u'uuid' in data)
         self.assertEquals(self.campaign_id, data[u'uuid'])
+
+
+    @httpretty.activate
+    def test_delete(self):
+        body = '' \
+            '''
+            {
+                "message" : "Deleted",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/campaigns/%s" % self.campaign_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign_delete(uuid=self.campaign_id)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Deleted', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
+
+

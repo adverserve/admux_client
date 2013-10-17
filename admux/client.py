@@ -43,6 +43,13 @@ class Client(object):
         return None
 
     @staticmethod
+    def _datetime(val):
+        """ Format: u"2013-10-05T20:15:00" """
+        if val:
+            return val.strftime(u"%Y-%m-%dT%H:%M:%S")
+        return None
+
+    @staticmethod
     def _clean_dict(dictionary):
         return filter(lambda x: x[1] is not None, dictionary.items())
 
@@ -296,6 +303,15 @@ class Client(object):
         }
 
         return self._request('GET', url, params=params)
+
+    def campaign_delete(self, uuid):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/delete/campaigns/uuid/
+
+        uuid: campaign identifier
+        """
+        url = '/campaigns/%(uuid)s' % { 'uuid': uuid, }
+        return self._request('DELETE', url)
 
 
 
