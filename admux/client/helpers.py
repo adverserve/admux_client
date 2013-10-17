@@ -1,4 +1,6 @@
 # coding: utf-8
+import base64
+import os
 
 def _list(values):
     if values:
@@ -28,6 +30,19 @@ def _datetime(val):
     if val:
         return val.strftime(u"%Y-%m-%dT%H:%M:%S")
     return None
+
+def _file(path, file_object):
+    if not file_object:
+        f = open(path, 'rb')
+
+    name = os.path.basename(path)
+    data = base64.b64encode(file_object.read())
+
+    return {
+        u'filename': name,
+        u'data': data,
+    }
+
 
 def _clean_dict(dictionary):
     return dict(
