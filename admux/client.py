@@ -11,7 +11,7 @@ class ProtocolError(Exception):
     pass
 
 class Client(object):
-    default_base_url = 'http://admux-demo.trust-box.at/v1'
+    default_base_url = 'http://aaadmux-demo.trust-box.at/v1'
     default_headers = {
         'content-type': 'application/json',
     }
@@ -411,6 +411,21 @@ class Client(object):
 
         return self._request('GET', url, params=params)
 
+    def creative(self, uuid, links=None, expand=None):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/get/orders/uuid/
+
+        uuid: creative identifier
+        links: Boolean
+        expand: array of strings (e.g. clickwords,images)
+        """
+        url = '/creatives/%(uuid)s' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
 
 
 

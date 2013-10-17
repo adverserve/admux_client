@@ -629,5 +629,40 @@ class CreativesTest(BaseTest):
                            u'expand': [ u'clickwords,images', ] })
 
 
+    @httpretty.activate
+    def test_detail(self):
+        body = r'' \
+            r'''
+            {
+                "active": null,
+                "adition_id": "2173210",
+                "clickwords": [
+                    "http://admux-demo.trust-box.at/v1/clickwords/67C93426-359B-11E3-8E16-80D11002FE68"
+                ],
+                "created": "2013-10-15T13:12:11.000000",
+                "html": "\n                                    <div class=\"darkensite\">Hello World</div>\n",
+                "images": [],
+                "name": "Advertorial_kurier_advertorial",
+                "placement": "http://admux-demo.trust-box.at/v1/placements/94DA4392-0968-11E3-8AE3-B86E7401D844",
+                "updated": "2013-10-16T16:03:11.000000",
+                "uuid": "67323CB0-359B-11E3-8723-959B3BBECF3D"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/creatives/%s" % self.creative_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.creative(uuid=self.creative_id)
+        self.assertTrue(u'uuid' in data)
+        self.assertEqual(self.creative_id, data[u'uuid'])
+
+        data = api.creative(uuid=self.creative_id,
+                            links=True, expand=[ u'clickwords', ])
+        self.assertTrue(u'uuid' in data)
 
 
