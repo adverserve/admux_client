@@ -7,7 +7,7 @@ import requests
 from pprint import pprint
 
 from adserver.client import websites, placements, orders, campaigns, creatives
-
+from adserver.client import helpers
 
 class ProtocolError(Exception):
     pass
