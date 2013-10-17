@@ -428,3 +428,36 @@ class CampaignsTest(BaseTest):
         self.assertTrue(u'campaigns' in data)
 
 
+    @httpretty.activate
+    def test_detail(self):
+        body = '' \
+            '''
+            {
+                "active": null,
+                "adition_id": "536589",
+                "created": "2013-10-15T12:40:15.000000",
+                "creatives": [
+                    "http://admux-demo.trust-box.at/v1/creatives/67323CB0-359B-11E3-8723-959B3BBECF3D"
+                ],
+                "from_runtime": "2013-10-15T12:40:18.000000",
+                "name": "",
+                "priority": 1,
+                "to_runtime": "2013-10-15T12:40:18.000000",
+                "total": null,
+                "type": "open",
+                "updated": "2013-10-16T16:03:11.000000",
+                "uuid": "F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/campaigns/%s" % self.campaign_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign(uuid=self.campaign_id)
+        self.assertTrue(u'uuid' in data)
+        self.assertEquals(self.campaign_id, data[u'uuid'])
