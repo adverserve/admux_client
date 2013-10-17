@@ -30,4 +30,6 @@ def _datetime(val):
     return None
 
 def _clean_dict(dictionary):
-    return filter(lambda x: x[1] is not None, dictionary.items())
+    return dict(
+        filter(lambda x: x[1] is not None, dictionary.items())
+    )
