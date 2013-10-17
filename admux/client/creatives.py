@@ -61,4 +61,21 @@ class CreativesClientMixin(object):
 
         return self._request('POST', url, data=data)
 
+    def creative_update(self, uuid,
+                        html=None, placement=None):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/put/creatives/uuid/
+
+        uuid: creative identifier
+        html: optional html code
+        placement: optional placement identifier
+        """
+        url = '/creatives/%(uuid)s' % { 'uuid': uuid, }
+        data = {
+            u'html': html,
+            u'placement': placement,
+        }
+
+        return self._request('PUT', url, data=data)
+
 

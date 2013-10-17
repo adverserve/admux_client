@@ -724,3 +724,31 @@ class CreativesTest(BaseTest):
 
         self.assertTrue(u'html' in request_body)
         self.assertTrue(u'placement' in request_body)
+
+
+    @httpretty.activate
+    def test_update(self):
+        body = r'' \
+            r'''
+            {
+                "message" : "Updated",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.PUT,
+            Client.get_url("/creatives/%s" % self.creative_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.creative_update(uuid=self.creative_id,
+                                   html='<p>Foo</p>',
+                                   placement=self.placement_id)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Updated', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
