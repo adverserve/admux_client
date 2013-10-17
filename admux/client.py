@@ -393,6 +393,26 @@ class Client(object):
         return self._request('PUT', url, data=data)
 
 
+    # Creatives
+    # ======
+    def creatives(self, uuid, links=None, expand=None):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/get/campaigns/uuid/creatives/
+
+        uuid: campaign identifier
+        links: Boolean
+        expand: array of strings (e.g. clickwords,images)
+        """
+        url = '/campaigns/%(uuid)s/creatives' % { 'uuid': uuid, }
+        params = {
+            'links': Client._bool(links),
+            'expand': Client._list(expand),
+        }
+
+        return self._request('GET', url, params=params)
+
+
+
 
 if __name__ == '__main__':
     ch = logging.StreamHandler()
