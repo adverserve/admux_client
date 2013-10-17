@@ -9,9 +9,12 @@ from django.test import TestCase
 from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
-from adserver.tests.websites import WebsiteMixin
+from adserver.tests.websites import WebsitesMixin
 
 class PlacementsMixin(object):
+    placement_id = None
+
+    @fake_requests
     def _get_placements(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -44,7 +47,7 @@ class PlacementsMixin(object):
 
         return data
 
-class PlacementsTest(PlacementsMixin, WebsiteMixin, LoginMixin,
+class PlacementsTest(PlacementsMixin, WebsitesMixin, LoginMixin,
                      BaseMixin, TestCase):
 
     def setUp(self):

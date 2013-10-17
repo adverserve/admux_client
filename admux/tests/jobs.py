@@ -11,14 +11,11 @@ from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
-class JobsTest(BaseMixin, LoginMixin, TestCase):
-
-    def setUp(self):
-        self.api = Client()
-        self._login(*self.credentials)
+class JobsMixin(object):
+    job_id = None
 
     @fake_requests
-    def test_list(self):
+    def _jobs_list(self, *args, **kwargs):
         body = r'' \
             r'''
             {
@@ -59,9 +56,44 @@ class JobsTest(BaseMixin, LoginMixin, TestCase):
         )
 
         data = api.jobs()
+        self.job_id = data['jobs'][0]['uuid']
+        return data
+
+    @fake_requests
+    def _job_delete(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "message" : "Deleted"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/jobs/%s" % self.job_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.job_delete(uuid=self.job_id)
+        return data
+
+
+class JobsTest(JobsMixin, LoginMixin,
+               BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+        self._jobs_list()
+
+    @fake_requests
+    def test_list(self):
+        data = self._jobs_list()
         self.assertTrue(u'jobs' in data)
 
-        data = api.jobs(links=True, expand=[ u'foo', ])
+        data = self._jobs_list(links=True, expand=[ u'foo', ])
         self.assertTrue(u'jobs' in data)
 
         if httpretty.httpretty.is_enabled():
@@ -117,22 +149,7 @@ class JobsTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_delete(self):
-        body = r'' \
-            r'''
-            {
-                "message" : "Deleted"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.DELETE,
-            Client.get_url("/jobs/%s" % self.job_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.job_delete(uuid=self.job_id)
+        data = self._job_delete(uuid=self.job_id)
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Deleted', data[u'message'])
 

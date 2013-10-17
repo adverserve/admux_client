@@ -27,21 +27,5 @@ def fake_requests(func):
 
 
 class BaseMixin(object):
-    order_id = u"F01CD8A0-3596-11E3-8D31-B4305DD555A5"
-    order_name = u"test-order"
-    adition_id = 24
-    agency_id = 25
-    client_id = 26
-
-    campaign_id = u"F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
-    campaign_name = u"test-campaign"
-    campaign_type = u"closedClicks"
-    invalid_campaign_type = u"invalid"
-
-    creative_id = u"67323CB0-359B-11E3-8723-959B3BBECF3D"
-
-    clickword_id = u"67C93426-359B-11E3-8E16-80D11002FE68"
-
-    image_id = u"C9819C44-1322-11E3-9E33-96237FA36B44"
 
     job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"

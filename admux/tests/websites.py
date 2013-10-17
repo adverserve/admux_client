@@ -10,7 +10,10 @@ from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
-class WebsiteMixin(object):
+class WebsitesMixin(object):
+    website_id = None
+
+    @fake_requests
     def _get_websites(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -52,7 +55,7 @@ class WebsiteMixin(object):
         return data
 
 
-class WebsitesTest(WebsiteMixin, LoginMixin,
+class WebsitesTest(WebsitesMixin, LoginMixin,
                    BaseMixin, TestCase):
 
     def setUp(self):

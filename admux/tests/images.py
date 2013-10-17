@@ -12,15 +12,17 @@ from django.test import TestCase
 from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
+from adserver.tests.websites import WebsitesMixin
+from adserver.tests.placements import PlacementsMixin
+from adserver.tests.orders import OrdersMixin
+from adserver.tests.campaigns import CampaignsMixin
+from adserver.tests.creatives import CreativesMixin
 
-class ImagesTest(BaseMixin, LoginMixin, TestCase):
-
-    def setUp(self):
-        self.api = Client()
-        self._login(*self.credentials)
+class ImagesMixin(object):
+    image_id = None
 
     @fake_requests
-    def test_list(self):
+    def _images_list(self, *args, **kwargs):
         body = r'' \
             r'''
             {
@@ -54,11 +56,92 @@ class ImagesTest(BaseMixin, LoginMixin, TestCase):
             content_type="application/json"
         )
 
-        data = api.images(uuid=self.creative_id)
+        data = api.images(*args, **kwargs)
+        self.image_id = data['images'][0]['uuid']
+
+        return data
+
+    @fake_requests
+    def _image_delete(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "message" : "Deleted",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/images/%s" % self.image_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.image_delete(*args, **kwargs)
+        return data
+
+    @fake_requests
+    def _image_create(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "image" : "C9819C44-1322-11E3-9E33-96237FA36B44",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.POST,
+            Client.get_url("/creatives/%s/images" % self.creative_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.image_create(*args, **kwargs)
+        self.image_id = data['image']
+
+        return data
+
+
+class ImagesTest(ImagesMixin,
+                 CreativesMixin, OrdersMixin, CampaignsMixin,
+                 PlacementsMixin, WebsitesMixin,
+                 LoginMixin,
+                 BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+
+        self._get_websites()
+        self._get_placements()
+
+        self._order_create(name=self.order_name)
+        self._campaign_create(uuid=self.order_id, name=self.campaign_name)
+
+        self._creative_create(uuid=self.campaign_id,
+                              html=self.creative_html,
+                              placement=self.placement_id)
+
+        self._images_list(uuid=self.creative_id)
+
+
+    def tearDown(self):
+        self._order_delete(uuid=self.order_id)
+        self._campaign_delete(uuid=self.campaign_id)
+        self._creative_delete(uuid=self.creative_id)
+
+
+    @fake_requests
+    def test_list(self):
+        data = self._images_list(uuid=self.creative_id)
         self.assertTrue(u'images' in data)
 
-        data = api.images(uuid=self.creative_id,
-                              links=True, expand=[ u'foo', ])
+        data = self._images_list(uuid=self.creative_id,
+                                 links=True, expand=[ u'foo', ])
         self.assertTrue(u'images' in data)
 
         if httpretty.httpretty.is_enabled():
@@ -76,19 +159,20 @@ class ImagesTest(BaseMixin, LoginMixin, TestCase):
                "filename" : "erdbeere.jpg",
                "data" : "/9j/[..]KAUB//2Q==\n",
                "updated" : "2013-09-01T16:23:08.000000Z",
-               "uuid" : "C9819C44-1322-11E3-9E33-96237FA36B44",
+               "uuid" : "%(image_id)s",
                "links" : [
                   {
                      "rel" : "self",
-                     "href" : "http://admux-demo.trust-box.at/v1/images/C9819C44-1322-11E3-9E33-96237FA36B44"
+                     "href" : "http://admux-demo.trust-box.at/v1/images/%(image_id)s"
                   },
                   {
                      "rel" : "up",
-                     "href" : "http://admux-demo.trust-box.at/v1/creatives/C97FA33A-1322-11E3-9E33-96237FA36B44"
+                     "href" : "http://admux-demo.trust-box.at/v1/creatives/%(creative_id)s"
                   }
                ]
             }
-            '''
+            ''' % { 'image_id': self.image_id,
+                    'creative_id': self.creative_id, }
         api = self.api
 
         httpretty.register_uri(
@@ -109,23 +193,7 @@ class ImagesTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_delete(self):
-        body = r'' \
-            r'''
-            {
-                "message" : "Deleted",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.DELETE,
-            Client.get_url("/images/%s" % self.image_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.image_delete(uuid=self.image_id)
+        data = self._image_delete(uuid=self.image_id)
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Deleted', data[u'message'])
 
@@ -135,25 +203,9 @@ class ImagesTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_create(self):
-        body = r'' \
-            r'''
-            {
-                "image" : "C9819C44-1322-11E3-9E33-96237FA36B44",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.POST,
-            Client.get_url("/creatives/%s/images" % self.creative_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.image_create(uuid=self.creative_id,
-                                file_name='sample.jpg',
-                                file_object=StringIO("sample data"))
+        data = self._image_create(uuid=self.creative_id,
+                                  file_name='sample.jpg',
+                                  file_object=StringIO("sample data"))
         self.assertTrue(u'image' in data)
         self.assertEquals(self.image_id, data[u'image'])
 

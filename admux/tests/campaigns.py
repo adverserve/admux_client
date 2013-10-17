@@ -12,16 +12,18 @@ from django.test import TestCase
 from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
+from adserver.tests.orders import OrdersMixin
 
 
-class CampaignsTest(BaseMixin, LoginMixin, TestCase):
+class CampaignsMixin(object):
+    campaign_id = None
 
-    def setUp(self):
-        self.api = Client()
-        self._login(*self.credentials)
+    campaign_name = u"test-campaign"
+    campaign_type = u"closedClicks"
+    invalid_campaign_type = u"invalid"
 
     @fake_requests
-    def test_list(self):
+    def _campaigns_list(self, *args, **kwargs):
         body = r'' \
             r'''
             {
@@ -54,7 +56,75 @@ class CampaignsTest(BaseMixin, LoginMixin, TestCase):
             content_type="application/json"
         )
 
-        data = api.campaigns(self.order_id)
+        data = api.campaigns(*args, **kwargs)
+        self.campaign_id = data['campaigns'][0]['uuid']
+
+        return data
+
+    @fake_requests
+    def _campaign_delete(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "message" : "Deleted",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/campaigns/%s" % self.campaign_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign_delete(uuid=self.campaign_id)
+        self.campaign_id = None
+
+        return data
+
+    @fake_requests
+    def _campaign_create(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "campaign" : "F0F9FFF0-3596-11E3-ABFF-E3E78741F450",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.POST,
+            Client.get_url("/orders/%s/campaigns" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign_create(*args, **kwargs)
+        self.campaign_id = data['campaign']
+
+        return data
+
+
+
+class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
+                    BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+        self._order_create(name=self.order_name)
+        self._campaign_create(uuid=self.order_id, name=self.campaign_name)
+
+    def tearDown(self):
+        self._order_delete(uuid=self.order_id)
+        self._campaign_delete(uuid=self.campaign_id)
+
+    @fake_requests
+    def test_list(self):
+        data = self._campaigns_list(uuid=self.order_id)
         self.assertTrue(u'campaigns' in data)
 
 
@@ -76,9 +146,9 @@ class CampaignsTest(BaseMixin, LoginMixin, TestCase):
                 "total": null,
                 "type": "open",
                 "updated": "2013-10-16T16:03:11.000000",
-                "uuid": "F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+                "uuid": "%s"
             }
-            '''
+            ''' % self.campaign_id
         api = self.api
 
         httpretty.register_uri(
@@ -95,23 +165,7 @@ class CampaignsTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_delete(self):
-        body = r'' \
-            r'''
-            {
-                "message" : "Deleted",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.DELETE,
-            Client.get_url("/campaigns/%s" % self.campaign_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.campaign_delete(uuid=self.campaign_id)
+        data = self._campaign_delete(uuid=self.campaign_id)
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Deleted', data[u'message'])
 
@@ -121,38 +175,22 @@ class CampaignsTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_create(self):
-        body = r'' \
-            r'''
-            {
-                "campaign" : "F0F9FFF0-3596-11E3-ABFF-E3E78741F450",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.POST,
-            Client.get_url("/orders/%s/campaigns" % self.order_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.campaign_create(uuid=self.order_id, name=self.order_name)
+        data = self._campaign_create(uuid=self.order_id, name=self.campaign_name)
         self.assertTrue(u'campaign' in data)
         self.assertEquals(self.campaign_id, data[u'campaign'])
 
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
 
-        data = api.campaign_create(uuid=self.order_id,
-                                   name=self.campaign_name,
+        data = self._campaign_create(uuid=self.order_id,
+                                     name=self.campaign_name,
 
-                                   adition_id=self.adition_id,
-                                   campaign_type=self.campaign_type,
-                                   total=500,
-                                   priority=2,
-                                   from_runtime=datetime.now(),
-                                   to_runtime=datetime.now())
+                                     adition_id=self.adition_id,
+                                     campaign_type=self.campaign_type,
+                                     total=500,
+                                     priority=2,
+                                     from_runtime=datetime.now(),
+                                     to_runtime=datetime.now())
 
         self.assertTrue(u'campaign' in data)
         self.assertEquals(self.campaign_id, data[u'campaign'])
@@ -169,9 +207,9 @@ class CampaignsTest(BaseMixin, LoginMixin, TestCase):
             self.assertTrue(u'to_runtime' in request_body)
 
         with self.assertRaises(ValueError):
-            data = api.campaign_create(uuid=self.order_id,
-                                       name=self.campaign_name,
-                                       campaign_type=self.invalid_campaign_type)
+            data = self._campaign_create(uuid=self.order_id,
+                                         name=self.campaign_name,
+                                         campaign_type=self.invalid_campaign_type)
 
 
     @fake_requests

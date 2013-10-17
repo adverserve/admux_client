@@ -10,15 +10,20 @@ from django.test import TestCase
 from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
+from adserver.tests.websites import WebsitesMixin
+from adserver.tests.placements import PlacementsMixin
+from adserver.tests.orders import OrdersMixin
+from adserver.tests.campaigns import CampaignsMixin
+from adserver.tests.creatives import CreativesMixin
 
-class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
+class ClickwordsMixin(object):
+    clickword_id = None
 
-    def setUp(self):
-        self.api = Client()
-        self._login(*self.credentials)
+    clickword_tag = u'foobar'
+    clickword_url = u'http://foobar.com/some/path'
 
     @fake_requests
-    def test_list(self):
+    def _clickwords_list(self, *args, **kwargs):
         body = r'' \
             r'''
             {
@@ -49,11 +54,89 @@ class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
             content_type="application/json"
         )
 
-        data = api.clickwords(uuid=self.creative_id)
+        data = api.clickwords(*args, **kwargs)
+        self.clickword_id = data['clickwords'][0]['uuid']
+
+        return data
+
+    @fake_requests
+    def _clickword_delete(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "message" : "Deleted",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/clickwords/%s" % self.clickword_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.clickword_delete(uuid=self.clickword_id)
+        return data
+
+    @fake_requests
+    def _clickword_create(self, *args, **kwargs):
+        body = r'' \
+            r'''
+            {
+                "clickword" : "%s",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            ''' % self.clickword_id
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.POST,
+            Client.get_url("/creatives/%s/clickwords" % self.creative_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.clickword_create(*args, **kwargs)
+
+        return data
+
+class ClickwordsTest(ClickwordsMixin,
+                     CreativesMixin, OrdersMixin, CampaignsMixin,
+                     PlacementsMixin, WebsitesMixin,
+                     LoginMixin,
+                     BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+
+        self._get_websites()
+        self._get_placements()
+
+        self._order_create(name=self.order_name)
+        self._campaign_create(uuid=self.order_id, name=self.campaign_name)
+
+        self._creative_create(uuid=self.campaign_id,
+                              html=self.creative_html,
+                              placement=self.placement_id)
+
+        self._clickwords_list(uuid=self.creative_id)
+
+    def tearDown(self):
+        self._order_delete(uuid=self.order_id)
+        self._campaign_delete(uuid=self.campaign_id)
+        self._creative_delete(uuid=self.creative_id)
+
+
+    @fake_requests
+    def test_list(self):
+        data = self._clickwords_list(uuid=self.creative_id)
         self.assertTrue(u'clickwords' in data)
 
-        data = api.clickwords(uuid=self.creative_id,
-                              links=True, expand=[ u'foo', ])
+        data = self._clickwords_list(uuid=self.creative_id,
+                                     links=True, expand=[ u'foo', ])
         self.assertTrue(u'clickwords' in data)
 
         if httpretty.httpretty.is_enabled():
@@ -71,9 +154,9 @@ class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
                 "tag": "tennisnet.com",
                 "updated": "2013-10-15T13:12:12.000000",
                 "url": "http://www.tennisnet.com",
-                "uuid": "67C93426-359B-11E3-8E16-80D11002FE68"
+                "uuid": "%s"
             }
-            '''
+            ''' % self.clickword_id
         api = self.api
 
         httpretty.register_uri(
@@ -94,23 +177,7 @@ class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_delete(self):
-        body = r'' \
-            r'''
-            {
-                "message" : "Deleted",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.DELETE,
-            Client.get_url("/clickwords/%s" % self.clickword_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.clickword_delete(uuid=self.clickword_id)
+        data = self._clickword_delete(uuid=self.clickword_id)
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Deleted', data[u'message'])
 
@@ -120,25 +187,9 @@ class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
 
     @fake_requests
     def test_create(self):
-        body = r'' \
-            r'''
-            {
-                "clickword" : "67C93426-359B-11E3-8E16-80D11002FE68",
-                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
-            }
-            '''
-        api = self.api
-
-        httpretty.register_uri(
-            httpretty.POST,
-            Client.get_url("/creatives/%s/clickwords" % self.creative_id),
-            body=body,
-            content_type="application/json"
-        )
-
-        data = api.clickword_create(uuid=self.creative_id,
-                                    tag=u'foobar',
-                                    url=u'http://foobar.com/some/path')
+        data = self._clickword_create(uuid=self.creative_id,
+                                      tag=self.clickword_tag,
+                                      url=self.clickword_url)
         self.assertTrue(u'clickword' in data)
         self.assertEquals(self.clickword_id, data[u'clickword'])
 
@@ -172,8 +223,8 @@ class ClickwordsTest(BaseMixin, LoginMixin, TestCase):
         )
 
         data = api.clickword_update(uuid=self.clickword_id,
-                                    tag='foo',
-                                    url='http://foobar.com/some/path')
+                                    tag=self.clickword_tag,
+                                    url=self.clickword_url)
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Updated', data[u'message'])
 
