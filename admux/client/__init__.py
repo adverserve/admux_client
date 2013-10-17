@@ -72,6 +72,10 @@ class Client(websites.WebsitesClientMixin,
                  resp.status_code,
                  resp.text)
 
+        if resp.status_code == 400:
+            error_info = resp.json()
+            raise ProtocolError(error_info['error'])
+
         resp.raise_for_status()
         return resp.json()
 
