@@ -23,6 +23,8 @@ class BaseTest(TestCase):
     agency_id = 25
     client_id = 26
 
+    campaign_id = u"F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+
     job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"
 
     def setUp(self):
@@ -379,5 +381,50 @@ class OrdersTest(BaseTest):
 
         self.assertTrue(u'job' in data)
         self.assertEquals(self.job_id, data[u'job'])
+
+
+
+class CampaignsTest(BaseTest):
+
+    def setUp(self):
+        super(CampaignsTest, self).setUp()
+        self._login()
+
+    @httpretty.activate
+    def test_list(self):
+        body = '' \
+            '''
+            {
+                "campaigns": [
+                    {
+                        "active": null,
+                        "adition_id": "536589",
+                        "created": "2013-10-15T12:40:15.000000",
+                        "creatives": [
+                            "http://admux-demo.trust-box.at/v1/creatives/67323CB0-359B-11E3-8723-959B3BBECF3D"
+                        ],
+                        "from_runtime": "2013-10-15T12:40:18.000000",
+                        "name": "",
+                        "priority": 1,
+                        "to_runtime": "2013-10-15T12:40:18.000000",
+                        "total": null,
+                        "type": "open",
+                        "updated": "2013-10-16T16:03:11.000000",
+                        "uuid": "F0F9FFF0-3596-11E3-ABFF-E3E78741F450"
+                    }
+                ]
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.GET,
+            Client.get_url("/orders/%s/campaigns" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaigns(self.order_id)
+        self.assertTrue(u'campaigns' in data)
 
 
