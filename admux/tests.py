@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Run "manage.py test"
 """
@@ -75,8 +76,8 @@ class WebsitesTest(BaseTest):
 
     @httpretty.activate
     def test_list(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "websites" : [
                    {
@@ -122,8 +123,8 @@ class WebsitesTest(BaseTest):
 
     @httpretty.activate
     def test_detail(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "adition_id": "38855",
                 "advertorial_base_url": null,
@@ -164,8 +165,8 @@ class PlacementsTest(BaseTest):
 
     @httpretty.activate
     def test_list(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "placements": [
                     {
@@ -196,8 +197,8 @@ class PlacementsTest(BaseTest):
 
         @httpretty.activate
         def test_detail(self):
-            body = '' \
-                '''
+            body = r'' \
+                r'''
                 {
                     "adition_id": "2566638",
                     "created": "2013-08-20T07:17:33.000000",
@@ -231,8 +232,8 @@ class OrdersTest(BaseTest):
 
     @httpretty.activate
     def test_list(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "orders": [
                     {
@@ -266,8 +267,8 @@ class OrdersTest(BaseTest):
 
     @httpretty.activate
     def test_detail(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "adition_id": "2566638",
                 "created": "2013-08-20T07:17:33.000000",
@@ -295,8 +296,8 @@ class OrdersTest(BaseTest):
 
     @httpretty.activate
     def test_delete(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "message" : "Deleted",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
@@ -321,8 +322,8 @@ class OrdersTest(BaseTest):
 
     @httpretty.activate
     def test_create(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "order" : "F01CD8A0-3596-11E3-8D31-B4305DD555A5",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
@@ -362,8 +363,8 @@ class OrdersTest(BaseTest):
 
     @httpretty.activate
     def test_update(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "message" : "Updated",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
@@ -396,8 +397,8 @@ class CampaignsTest(BaseTest):
 
     @httpretty.activate
     def test_list(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "campaigns": [
                     {
@@ -434,8 +435,8 @@ class CampaignsTest(BaseTest):
 
     @httpretty.activate
     def test_detail(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "active": null,
                 "adition_id": "536589",
@@ -469,8 +470,8 @@ class CampaignsTest(BaseTest):
 
     @httpretty.activate
     def test_delete(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "message" : "Deleted",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
@@ -495,8 +496,8 @@ class CampaignsTest(BaseTest):
 
     @httpretty.activate
     def test_create(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "campaign" : "F0F9FFF0-3596-11E3-ABFF-E3E78741F450",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
@@ -549,8 +550,8 @@ class CampaignsTest(BaseTest):
 
     @httpretty.activate
     def test_update(self):
-        body = '' \
-            '''
+        body = r'' \
+            r'''
             {
                 "message" : "Updated",
                 "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
