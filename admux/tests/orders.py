@@ -116,12 +116,14 @@ class OrdersTest(OrdersMixin, LoginMixin,
 
     @fake_requests
     def test_list(self):
+        """ Listing Orders """
         data = self._orders_list()
         self.assertTrue(u'orders' in data)
 
 
     @fake_requests
     def test_detail(self):
+        """ Listing a single Order """
         body = r'' \
             r'''
             {
@@ -151,23 +153,34 @@ class OrdersTest(OrdersMixin, LoginMixin,
 
     @fake_requests
     def test_delete(self):
+        """ Removing an Order """
         data = self._order_delete(uuid=self.order_id)
 
         self.assertTrue(u'message' in data)
         self.assertEquals(u'Deleted', data[u'message'])
 
         self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
 
 
     @fake_requests
     def test_create(self):
+        """ Creating an Order """
+        self._order_delete(self.order_id)
+
         data = self._order_create(name=self.order_name)
         self.assertTrue(u'order' in data)
         self.assertEquals(self.order_id, data[u'order'])
 
         self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
+
+        # house-keeping
+        self._order_delete(self.order_id)
+
+
+    @fake_requests
+    def test_create_complex(self):
+        """ Creating a complex Order """
+        self._order_delete(self.order_id)
 
         data = self._order_create(name=self.order_name,
 
@@ -185,9 +198,13 @@ class OrdersTest(OrdersMixin, LoginMixin,
             self.assertTrue(u'agency_id' in request_body)
             self.assertTrue(u'client_id' in request_body)
 
+        # house-keeping
+        self._order_delete(self.order_id)
+
 
     @fake_requests
     def test_update(self):
+        """ Updating an Order """
         body = r'' \
             r'''
             {
