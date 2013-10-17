@@ -7,7 +7,7 @@ import requests
 from pprint import pprint
 
 from adserver.client import websites, placements, orders, \
-     campaigns, creatives, clickwords, images
+     campaigns, creatives, clickwords, images, jobs
 from adserver.client import helpers
 
 class ProtocolError(Exception):
@@ -19,7 +19,8 @@ class Client(websites.WebsitesClientMixin,
              campaigns.CampaignsClientMixin,
              creatives.CreativesClientMixin,
              clickwords.ClickwordsClientMixin,
-             images.ImagesClientMixin):
+             images.ImagesClientMixin,
+             jobs.JobsClientMixin):
 
     default_base_url = 'http://admux-demo.trust-box.at/v1'
     default_headers = {
