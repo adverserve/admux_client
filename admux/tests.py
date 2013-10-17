@@ -76,6 +76,8 @@ class BasicTest(TestMixin, TestCase):
 
     @fake_requests
     def test_login(self):
+        """Login to Api-Service"""
+
         api = self.api
 
         self.assertIsNone(api.api_key)
