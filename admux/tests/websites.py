@@ -10,14 +10,8 @@ from adserver.client import Client
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
-class WebsitesTest(BaseMixin, LoginMixin, TestCase):
-
-    def setUp(self):
-        self.api = Client()
-        self._login(*self.credentials)
-
-    @fake_requests
-    def test_list(self):
+class WebsiteMixin(object):
+    def _get_websites(self, *args, **kwargs):
         body = r'' \
             r'''
             {
@@ -52,10 +46,28 @@ class WebsitesTest(BaseMixin, LoginMixin, TestCase):
             content_type="application/json"
         )
 
-        data = api.websites()
+        data = api.websites(*args, **kwargs)
+        self.website_id = data['websites'][0]['uuid']
+
+        return data
+
+
+class WebsitesTest(WebsiteMixin, LoginMixin,
+                   BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+        self._get_websites()
+
+    @fake_requests
+    def test_list(self):
+        api = self.api
+
+        data = self._get_websites()
         self.assertTrue(u'websites' in data)
 
-        data = api.websites(links=True, expand=[ u'placements', ])
+        data = self._get_websites(links=True, expand=[ u'placements', ])
         self.assertTrue(u'websites' in data)
 
         if httpretty.httpretty.is_enabled():
@@ -80,9 +92,9 @@ class WebsitesTest(BaseMixin, LoginMixin, TestCase):
                     "http://admux-demo.trust-box.at/v1/placements/976BB26C-0968-11E3-9AD2-C0060CC2BC6A"
                 ],
                 "updated": "2013-08-20T07:16:17.000000",
-                "uuid": "67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
+                "uuid": "%s"
             }
-            '''
+            ''' % self.website_id
         api = self.api
 
         httpretty.register_uri(

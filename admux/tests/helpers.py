@@ -27,9 +27,6 @@ def fake_requests(func):
 
 
 class BaseMixin(object):
-    website_id = u"67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
-    placement_id = u"953E93A6-0968-11E3-877B-F091A39B799E"
-
     order_id = u"F01CD8A0-3596-11E3-8D31-B4305DD555A5"
     order_name = u"test-order"
     adition_id = 24
