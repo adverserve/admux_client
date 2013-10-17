@@ -547,5 +547,29 @@ class CampaignsTest(BaseTest):
                                        campaign_type=self.invalid_campaign_type)
 
 
+    @httpretty.activate
+    def test_update(self):
+        body = '' \
+            '''
+            {
+                "message" : "Updated",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
 
+        httpretty.register_uri(
+            httpretty.PUT,
+            Client.get_url("/campaigns/%s" % self.campaign_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign_update(uuid=self.campaign_id,
+                                   name=self.campaign_name)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Updated', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
 

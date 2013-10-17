@@ -30,6 +30,14 @@ class Client(object):
         return values
 
     @staticmethod
+    def _in_list(value, restricted_to):
+        if value and value not in restricted_to:
+            raise ValueError("Value (%s) not in range ([ %s ])" % \
+                             (value,
+                              ", ".join(restricted_to)))
+        return value
+
+    @staticmethod
     def _int(val):
         try:
             return int(val)
@@ -334,16 +342,13 @@ class Client(object):
         """
         url = '/orders/%(uuid)s/campaigns' % { 'uuid': uuid, }
 
-        if campaign_type and campaign_type not in [ u'closedClicks',
-                                                    u'closedViews',
-                                                    u'open',
-                                                    u'redirect', ]:
-            raise ValueError(campaign_type)
-
         data = {
             u'name': name,
             u'adition_id': Client._int(adition_id),
-            u'campaign_type': campaign_type,
+            u'campaign_type': Client._in_list(campaign_type, [ u'closedClicks',
+                                                               u'closedViews',
+                                                               u'open',
+                                                               u'redirect', ]),
             u'total': Client._int(total),
             u'prioriry': Client._int(priority),
             u'from_runtime': Client._datetime(from_runtime),
@@ -351,6 +356,41 @@ class Client(object):
         }
 
         return self._request('POST', url, data=data)
+
+    def campaign_update(self, uuid,
+                        name=None,
+                        adition_id=None, campaign_type=None, total=None,
+                        priority=None, from_runtime=None, to_runtime=None):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/put/campaigns/uuid/
+
+        uuid: order identifier
+        name: optional order name
+        adition_id: optional numeric id
+        campaign_type: string. Valid options: [ closedClicks,
+                                                closedViews,
+                                                open,
+                                                redirect ]
+        total: optional numeric id
+        priority: optional numeric id
+        from_runtime: optional datetime. Format: 2013-08-23T08:00:00
+        to_runtime: optional datetime. Format: 2013-10-05T20:15:00
+        """
+        url = '/campaigns/%(uuid)s' % { 'uuid': uuid, }
+        data = {
+            u'name': name,
+            u'adition_id': Client._int(adition_id),
+            u'campaign_type': Client._in_list(campaign_type, [ u'closedClicks',
+                                                               u'closedViews',
+                                                               u'open',
+                                                               u'redirect', ]),
+            u'total': Client._int(total),
+            u'prioriry': Client._int(priority),
+            u'from_runtime': Client._datetime(from_runtime),
+            u'to_runtime': Client._datetime(to_runtime),
+        }
+
+        return self._request('PUT', url, data=data)
 
 
 
