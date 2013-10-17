@@ -30,6 +30,10 @@ class BaseTest(TestCase):
     campaign_type = u"closedClicks"
     invalid_campaign_type = u"invalid"
 
+    creative_id = u"67323CB0-359B-11E3-8723-959B3BBECF3D"
+
+    clickword_id = u"67C93426-359B-11E3-8E16-80D11002FE68"
+
     job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"
 
     def setUp(self):
