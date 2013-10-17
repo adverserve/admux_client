@@ -666,3 +666,29 @@ class CreativesTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
+    @httpretty.activate
+    def test_delete(self):
+        body = r'' \
+            r'''
+            {
+                "message" : "Deleted",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.DELETE,
+            Client.get_url("/creatives/%s" % self.creative_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.creative_delete(uuid=self.creative_id)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Deleted', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
+
+

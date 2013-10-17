@@ -36,3 +36,11 @@ class CreativesClientMixin(object):
 
         return self._request('GET', url, params=params)
 
+    def creative_delete(self, uuid):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/delete/creatives/uuid/
+
+        uuid: creative identifier
+        """
+        url = '/creatives/%(uuid)s' % { 'uuid': uuid, }
+        return self._request('DELETE', url)
