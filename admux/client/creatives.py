@@ -44,3 +44,21 @@ class CreativesClientMixin(object):
         """
         url = '/creatives/%(uuid)s' % { 'uuid': uuid, }
         return self._request('DELETE', url)
+
+    def creative_create(self, uuid, html, placement):
+        """
+        http://admux-demo.trust-box.at/developer/api/v1/post/campaigns/uuid/creatives/
+
+        uuid: campaign identifier
+        html: creative name
+        placement: placement identifier
+        """
+        url = '/campaigns/%(uuid)s/creatives' % { 'uuid': uuid, }
+        data = {
+            u'html': html,
+            u'placement': placement,
+        }
+
+        return self._request('POST', url, data=data)
+
+
