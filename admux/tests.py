@@ -6,6 +6,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from datetime import datetime
+import functools
 import json
 import httpretty
 from StringIO import StringIO
@@ -13,6 +14,23 @@ from StringIO import StringIO
 from django.test import TestCase
 
 from adserver.client import Client
+
+FAKE_REQUESTS = True
+
+def fake_requests(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if FAKE_REQUESTS:
+            httpretty.reset()
+            httpretty.enable()
+            try:
+                return func(*args, **kwargs)
+            finally:
+                httpretty.disable()
+        else:
+            return func(*args, **kwargs)
+    return wrapper
+
 
 class BaseTest(TestCase):
     api_key = u"C96A2442-1322-11E3-9E33-96237FA36B44"
@@ -42,7 +60,7 @@ class BaseTest(TestCase):
     def setUp(self):
         self.api = Client()
 
-    @httpretty.activate
+    @fake_requests
     def _login(self):
         httpretty.register_uri(
             httpretty.POST,
@@ -56,7 +74,7 @@ class BaseTest(TestCase):
 
 class BasicTest(BaseTest):
 
-    @httpretty.activate
+    @fake_requests
     def test_login(self):
         api = self.api
 
@@ -81,7 +99,7 @@ class WebsitesTest(BaseTest):
         super(WebsitesTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -128,7 +146,7 @@ class WebsitesTest(BaseTest):
                            u'expand': [ u'placements', ] })
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -170,7 +188,7 @@ class PlacementsTest(BaseTest):
         super(PlacementsTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -202,7 +220,7 @@ class PlacementsTest(BaseTest):
         self.assertTrue(u'placements' in data)
 
 
-        @httpretty.activate
+        @fake_requests
         def test_detail(self):
             body = r'' \
                 r'''
@@ -237,7 +255,7 @@ class OrdersTest(BaseTest):
         super(OrdersTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -272,7 +290,7 @@ class OrdersTest(BaseTest):
         self.assertTrue(u'orders' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -301,7 +319,7 @@ class OrdersTest(BaseTest):
         self.assertEquals(self.order_id, data[u'uuid'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
@@ -327,7 +345,7 @@ class OrdersTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_create(self):
         body = r'' \
             r'''
@@ -368,7 +386,7 @@ class OrdersTest(BaseTest):
         self.assertTrue(u'client_id' in request_body)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_update(self):
         body = r'' \
             r'''
@@ -402,7 +420,7 @@ class CampaignsTest(BaseTest):
         super(CampaignsTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -440,7 +458,7 @@ class CampaignsTest(BaseTest):
         self.assertTrue(u'campaigns' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -475,7 +493,7 @@ class CampaignsTest(BaseTest):
         self.assertEquals(self.campaign_id, data[u'uuid'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
@@ -501,7 +519,7 @@ class CampaignsTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_create(self):
         body = r'' \
             r'''
@@ -555,7 +573,7 @@ class CampaignsTest(BaseTest):
                                        campaign_type=self.invalid_campaign_type)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_update(self):
         body = r'' \
             r'''
@@ -588,7 +606,7 @@ class CreativesTest(BaseTest):
         super(CreativesTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -632,7 +650,7 @@ class CreativesTest(BaseTest):
                            u'expand': [ u'clickwords,images', ] })
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -669,7 +687,7 @@ class CreativesTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
@@ -695,7 +713,7 @@ class CreativesTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_create(self):
         body = r'' \
             r'''
@@ -729,7 +747,7 @@ class CreativesTest(BaseTest):
         self.assertTrue(u'placement' in request_body)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_update(self):
         body = r'' \
             r'''
@@ -763,7 +781,7 @@ class ClickwordsTest(BaseTest):
         super(ClickwordsTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -807,7 +825,7 @@ class ClickwordsTest(BaseTest):
                            u'expand': [ u'foo', ] })
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -837,7 +855,7 @@ class ClickwordsTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
@@ -863,7 +881,7 @@ class ClickwordsTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_create(self):
         body = r'' \
             r'''
@@ -897,7 +915,7 @@ class ClickwordsTest(BaseTest):
         self.assertTrue(u'url' in request_body)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_update(self):
         body = r'' \
             r'''
@@ -931,7 +949,7 @@ class ImagesTest(BaseTest):
         super(ImagesTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -978,7 +996,7 @@ class ImagesTest(BaseTest):
                            u'expand': [ u'foo', ] })
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -1018,7 +1036,7 @@ class ImagesTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
@@ -1044,7 +1062,7 @@ class ImagesTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-    @httpretty.activate
+    @fake_requests
     def test_create(self):
         body = r'' \
             r'''
@@ -1078,7 +1096,7 @@ class ImagesTest(BaseTest):
         self.assertTrue(u'data' in request_body)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_update(self):
         body = r'' \
             r'''
@@ -1112,7 +1130,7 @@ class JobsTest(BaseTest):
         super(JobsTest, self).setUp()
         self._login()
 
-    @httpretty.activate
+    @fake_requests
     def test_list(self):
         body = r'' \
             r'''
@@ -1164,7 +1182,7 @@ class JobsTest(BaseTest):
                            u'expand': [ u'foo', ] })
 
 
-    @httpretty.activate
+    @fake_requests
     def test_detail(self):
         body = r'' \
             r'''
@@ -1209,7 +1227,7 @@ class JobsTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
-    @httpretty.activate
+    @fake_requests
     def test_delete(self):
         body = r'' \
             r'''
