@@ -51,6 +51,8 @@ class Client(websites.WebsitesClientMixin,
             params = helpers._clean_dict(params)
 
         if data:
+            data = helpers._clean_dict(data)
+
             # converting to json
             data = json.dumps(data)
 
