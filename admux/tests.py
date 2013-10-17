@@ -33,7 +33,7 @@ def fake_requests(func):
 
 
 class TestMixin(object):
-    api_key = u"C96A2442-1322-11E3-9E33-96237FA36B44"
+    api_key = u"717A91DA-0BEE-11E3-9D78-B826E00120CD"
 
     website_id = u"67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
     placement_id = u"953E93A6-0968-11E3-877B-F091A39B799E"
@@ -83,14 +83,14 @@ class BasicTest(TestMixin, TestCase):
         httpretty.register_uri(
             httpretty.POST,
             Client.get_url("/login"),
-            body='{ "api_key" : "C96A2442-1322-11E3-9E33-96237FA36B44" }',
+            body='{ "api_key" : "717A91DA-0BEE-11E3-9D78-B826E00120CD" }',
             content_type="application/json"
         )
 
         key = api.login('strg', 'strg')
 
-        self.assertEqual(u"C96A2442-1322-11E3-9E33-96237FA36B44", key)
-        self.assertEqual(u"C96A2442-1322-11E3-9E33-96237FA36B44", api.api_key)
+        self.assertEqual(self.api_key, key)
+        self.assertEqual(self.api_key, api.api_key)
 
 
 class WebsitesTest(TestMixin, TestCase):
