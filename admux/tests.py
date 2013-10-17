@@ -32,7 +32,7 @@ def fake_requests(func):
     return wrapper
 
 
-class BaseTest(TestCase):
+class TestMixin(object):
     api_key = u"C96A2442-1322-11E3-9E33-96237FA36B44"
 
     website_id = u"67D02286-0968-11E3-B1D1-9E6D76D7A1E6"
@@ -57,9 +57,6 @@ class BaseTest(TestCase):
 
     job_id = u"CA5434B0-1322-11E3-9E33-96237FA36B44"
 
-    def setUp(self):
-        self.api = Client()
-
     @fake_requests
     def _login(self):
         httpretty.register_uri(
@@ -72,7 +69,10 @@ class BaseTest(TestCase):
 
 
 
-class BasicTest(BaseTest):
+class BasicTest(TestMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
 
     @fake_requests
     def test_login(self):
@@ -93,10 +93,10 @@ class BasicTest(BaseTest):
         self.assertEqual(u"C96A2442-1322-11E3-9E33-96237FA36B44", api.api_key)
 
 
-class WebsitesTest(BaseTest):
+class WebsitesTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(WebsitesTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -183,9 +183,9 @@ class WebsitesTest(BaseTest):
         self.assertTrue(u'uuid' in data)
 
 
-class PlacementsTest(BaseTest):
+class PlacementsTest(TestMixin, TestCase):
     def setUp(self):
-        super(PlacementsTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -249,10 +249,10 @@ class PlacementsTest(BaseTest):
             self.assertEquals(self.placement_id, data[u'uuid'])
 
 
-class OrdersTest(BaseTest):
+class OrdersTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(OrdersTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -414,10 +414,10 @@ class OrdersTest(BaseTest):
 
 
 
-class CampaignsTest(BaseTest):
+class CampaignsTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(CampaignsTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -600,10 +600,10 @@ class CampaignsTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-class CreativesTest(BaseTest):
+class CreativesTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(CreativesTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -775,10 +775,10 @@ class CreativesTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-class ClickwordsTest(BaseTest):
+class ClickwordsTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(ClickwordsTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -943,10 +943,10 @@ class ClickwordsTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-class ImagesTest(BaseTest):
+class ImagesTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(ImagesTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
@@ -1124,10 +1124,10 @@ class ImagesTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
-class JobsTest(BaseTest):
+class JobsTest(TestMixin, TestCase):
 
     def setUp(self):
-        super(JobsTest, self).setUp()
+        self.api = Client()
         self._login()
 
     @fake_requests
