@@ -493,3 +493,59 @@ class CampaignsTest(BaseTest):
         self.assertEquals(self.job_id, data[u'job'])
 
 
+    @httpretty.activate
+    def test_create(self):
+        body = '' \
+            '''
+            {
+                "campaign" : "F0F9FFF0-3596-11E3-ABFF-E3E78741F450",
+                "job" : "CA5434B0-1322-11E3-9E33-96237FA36B44"
+            }
+            '''
+        api = self.api
+
+        httpretty.register_uri(
+            httpretty.POST,
+            Client.get_url("/orders/%s/campaigns" % self.order_id),
+            body=body,
+            content_type="application/json"
+        )
+
+        data = api.campaign_create(uuid=self.order_id, name=self.order_name)
+        self.assertTrue(u'campaign' in data)
+        self.assertEquals(self.campaign_id, data[u'campaign'])
+
+        self.assertTrue(u'job' in data)
+        self.assertEquals(self.job_id, data[u'job'])
+
+        data = api.campaign_create(uuid=self.order_id,
+                                   name=self.campaign_name,
+
+                                   adition_id=self.adition_id,
+                                   campaign_type=self.campaign_type,
+                                   total=500,
+                                   priority=2,
+                                   from_runtime=datetime.now(),
+                                   to_runtime=datetime.now())
+
+        self.assertTrue(u'campaign' in data)
+        self.assertEquals(self.campaign_id, data[u'campaign'])
+
+        request_body = httpretty.last_request().body
+        request_body = json.loads(request_body)
+
+        self.assertTrue(u'adition_id' in request_body)
+        self.assertTrue(u'campaign_type' in request_body)
+        self.assertTrue(u'total' in request_body)
+        self.assertTrue(u'prioriry' in request_body)
+        self.assertTrue(u'from_runtime' in request_body)
+        self.assertTrue(u'to_runtime' in request_body)
+
+        with self.assertRaises(ValueError):
+            data = api.campaign_create(uuid=self.order_id,
+                                       name=self.campaign_name,
+                                       campaign_type=self.invalid_campaign_type)
+
+
+
+
