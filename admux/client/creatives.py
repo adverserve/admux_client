@@ -49,8 +49,8 @@ class CreativesClientMixin(object):
         """
         http://admux-demo.trust-box.at/developer/api/v1/post/campaigns/uuid/creatives/
 
-        uuid: campaign identifier
-        html: creative name
+        uuid: creative identifier
+        html: html code
         placement: placement identifier
         """
         url = '/campaigns/%(uuid)s/creatives' % { 'uuid': uuid, }
