@@ -3,6 +3,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from datetime import datetime
+from uuid import uuid4
 
 import json
 import httpretty
@@ -18,7 +19,7 @@ from adserver.tests.orders import OrdersMixin
 class CampaignsMixin(object):
     campaign_id = None
 
-    campaign_name = u"test-campaign"
+    campaign_name = u"test-campaign-%s" % uuid4()
     campaign_type = u"closedClicks"
     invalid_campaign_type = u"invalid"
 
@@ -108,6 +109,87 @@ class CampaignsMixin(object):
         return data
 
 
+class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
+                       BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+        self._order_create(name=self.order_name)
+
+    def tearDown(self):
+        self._order_delete(uuid=self.order_id)
+
+    @fake_requests
+    def test_create(self):
+        """ Creating a simple campaign """
+        data = self._campaign_create(uuid=self.order_id, name=self.campaign_name)
+        self.assertTrue(u'campaign' in data)
+        self.assertEquals(self.campaign_id, data[u'campaign'])
+
+        self.assertTrue(u'job' in data)
+
+    @fake_requests
+    def test_create_complex(self):
+        """ Creating a complex campaign """
+
+        data = self._campaign_create(uuid=self.order_id,
+                                     name=self.campaign_name,
+
+                                     adition_id=self.adition_id,
+                                     campaign_type=self.campaign_type,
+                                     total=500,
+                                     priority=2,
+                                     from_runtime=datetime.now(),
+                                     to_runtime=datetime.now())
+
+        self.assertTrue(u'campaign' in data)
+        self.assertEquals(self.campaign_id, data[u'campaign'])
+
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
+
+            self.assertTrue(u'adition_id' in request_body)
+            self.assertTrue(u'campaign_type' in request_body)
+            self.assertTrue(u'total' in request_body)
+            self.assertTrue(u'prioriry' in request_body)
+            self.assertTrue(u'from_runtime' in request_body)
+            self.assertTrue(u'to_runtime' in request_body)
+
+    @fake_requests
+    def test_create_invalid(self):
+        """ reate campaign for invalid campaign-type """
+
+        with self.assertRaises(ValueError):
+            data = self._campaign_create(
+                uuid=self.order_id,
+                name=self.campaign_name,
+                campaign_type=self.invalid_campaign_type
+            )
+
+
+class RemoveCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
+                          BaseMixin, TestCase):
+
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+        self._order_create(name=self.order_name)
+        self._campaign_create(uuid=self.order_id, name=self.campaign_name)
+
+    def tearDown(self):
+        self._order_delete(uuid=self.order_id)
+
+    @fake_requests
+    def test_delete(self):
+        """ Removing campaign """
+        data = self._campaign_delete(uuid=self.campaign_id)
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Deleted', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+
 
 class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
                     BaseMixin, TestCase):
@@ -124,12 +206,14 @@ class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
 
     @fake_requests
     def test_list(self):
+        """ Listing campaigns """
         data = self._campaigns_list(uuid=self.order_id)
         self.assertTrue(u'campaigns' in data)
 
 
     @fake_requests
     def test_detail(self):
+        """ Listing one campaign """
         body = r'' \
             r'''
             {
@@ -163,57 +247,11 @@ class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
         self.assertEquals(self.campaign_id, data[u'uuid'])
 
 
-    @fake_requests
-    def test_delete(self):
-        data = self._campaign_delete(uuid=self.campaign_id)
-        self.assertTrue(u'message' in data)
-        self.assertEquals(u'Deleted', data[u'message'])
-
-        self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
-
-
-    @fake_requests
-    def test_create(self):
-        data = self._campaign_create(uuid=self.order_id, name=self.campaign_name)
-        self.assertTrue(u'campaign' in data)
-        self.assertEquals(self.campaign_id, data[u'campaign'])
-
-        self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
-
-        data = self._campaign_create(uuid=self.order_id,
-                                     name=self.campaign_name,
-
-                                     adition_id=self.adition_id,
-                                     campaign_type=self.campaign_type,
-                                     total=500,
-                                     priority=2,
-                                     from_runtime=datetime.now(),
-                                     to_runtime=datetime.now())
-
-        self.assertTrue(u'campaign' in data)
-        self.assertEquals(self.campaign_id, data[u'campaign'])
-
-        if httpretty.httpretty.is_enabled():
-            request_body = httpretty.last_request().body
-            request_body = json.loads(request_body)
-
-            self.assertTrue(u'adition_id' in request_body)
-            self.assertTrue(u'campaign_type' in request_body)
-            self.assertTrue(u'total' in request_body)
-            self.assertTrue(u'prioriry' in request_body)
-            self.assertTrue(u'from_runtime' in request_body)
-            self.assertTrue(u'to_runtime' in request_body)
-
-        with self.assertRaises(ValueError):
-            data = self._campaign_create(uuid=self.order_id,
-                                         name=self.campaign_name,
-                                         campaign_type=self.invalid_campaign_type)
-
 
     @fake_requests
     def test_update(self):
+        """ Updating campaign """
+
         body = r'' \
             r'''
             {
@@ -236,4 +274,3 @@ class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
         self.assertEquals(u'Updated', data[u'message'])
 
         self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
