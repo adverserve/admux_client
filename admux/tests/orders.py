@@ -11,7 +11,6 @@ from uuid import uuid4
 from django.test import TestCase
 
 from adserver.client import Client, ProtocolClientError
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
 class OrdersMixin(object):
@@ -22,7 +21,7 @@ class OrdersMixin(object):
     agency_id = 25
     client_id = 26
 
-    @fake_requests
+    @httpretty.activate
     def _orders_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -58,7 +57,7 @@ class OrdersMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _order_create(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -81,7 +80,7 @@ class OrdersMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _order_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -105,7 +104,7 @@ class OrdersMixin(object):
 
 
 class AddOrdersTest(OrdersMixin, LoginMixin,
-                    BaseMixin, TestCase):
+                    TestCase):
     def setUp(self):
         self.api = Client()
         self._login(*self.credentials)
@@ -116,7 +115,7 @@ class AddOrdersTest(OrdersMixin, LoginMixin,
         except ProtocolClientError:
             pass
 
-    @fake_requests
+    @httpretty.activate
     def test_create(self):
         """ Creating an Order """
         data = self._order_create(name=self.order_name)
@@ -127,7 +126,7 @@ class AddOrdersTest(OrdersMixin, LoginMixin,
 
 
 
-    @fake_requests
+    @httpretty.activate
     def test_create_complex(self):
         """ Creating a complex Order """
         data = self._order_create(name=self.order_name,
@@ -148,7 +147,7 @@ class AddOrdersTest(OrdersMixin, LoginMixin,
 
 
 class RemoveOrdersTest(OrdersMixin, LoginMixin,
-                       BaseMixin, TestCase):
+                       TestCase):
     def setUp(self):
         self.api = Client()
         self._login(*self.credentials)
@@ -156,7 +155,7 @@ class RemoveOrdersTest(OrdersMixin, LoginMixin,
         data = self._order_create(name=self.order_name)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         """ Removing an Order """
 
@@ -170,7 +169,7 @@ class RemoveOrdersTest(OrdersMixin, LoginMixin,
 
 
 class OrdersTest(OrdersMixin, LoginMixin,
-                 BaseMixin, TestCase):
+                 TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -180,14 +179,14 @@ class OrdersTest(OrdersMixin, LoginMixin,
     def tearDown(self):
         self._order_delete(uuid=self.order_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         """ Listing Orders """
         data = self._orders_list()
         self.assertTrue(u'orders' in data)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         """ Listing a single Order """
         body = r'' \
@@ -217,7 +216,7 @@ class OrdersTest(OrdersMixin, LoginMixin,
         self.assertEquals(self.order_id, data[u'uuid'])
 
 
-    @fake_requests
+    @httpretty.activate
     def test_update(self):
         """ Updating an Order """
         body = r'' \
@@ -242,5 +241,4 @@ class OrdersTest(OrdersMixin, LoginMixin,
         self.assertEquals(u'Updated', data[u'message'])
 
         self.assertTrue(u'job' in data)
-        self.assertEquals(self.job_id, data[u'job'])
 

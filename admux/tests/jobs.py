@@ -8,13 +8,12 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
 class JobsMixin(object):
     job_id = None
 
-    @fake_requests
+    @httpretty.activate
     def _jobs_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -59,7 +58,7 @@ class JobsMixin(object):
         self.job_id = data['jobs'][0]['uuid']
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _job_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -81,14 +80,14 @@ class JobsMixin(object):
 
 
 class JobsTest(JobsMixin, LoginMixin,
-               BaseMixin, TestCase):
+               TestCase):
 
     def setUp(self):
         self.api = Client()
         self._login(*self.credentials)
         self._jobs_list()
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         data = self._jobs_list()
         self.assertTrue(u'jobs' in data)
@@ -102,7 +101,7 @@ class JobsTest(JobsMixin, LoginMixin,
                                u'expand': [ u'foo', ] })
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         body = r'' \
             r'''
@@ -147,7 +146,7 @@ class JobsTest(JobsMixin, LoginMixin,
         self.assertTrue(u'uuid' in data)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         data = self._job_delete(uuid=self.job_id)
         self.assertTrue(u'message' in data)

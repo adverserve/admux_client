@@ -10,7 +10,6 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 from adserver.tests.websites import WebsitesMixin
 from adserver.tests.placements import PlacementsMixin
@@ -24,7 +23,7 @@ class ClickwordsMixin(object):
     clickword_tag = u'foobar-%s' % uuid4()
     clickword_url = u'http://foobar.com/some/path'
 
-    @fake_requests
+    @httpretty.activate
     def _clickwords_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -61,7 +60,7 @@ class ClickwordsMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _clickword_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -82,7 +81,7 @@ class ClickwordsMixin(object):
         data = api.clickword_delete(uuid=self.clickword_id)
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _clickword_create(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -110,7 +109,7 @@ class AddClickwordsTest(ClickwordsMixin,
                         CreativesMixin, OrdersMixin, CampaignsMixin,
                         PlacementsMixin, WebsitesMixin,
                         LoginMixin,
-                        BaseMixin, TestCase):
+                        TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -133,7 +132,7 @@ class AddClickwordsTest(ClickwordsMixin,
         self._creative_delete(uuid=self.creative_id)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_create(self):
         ''' Creating clickword '''
 
@@ -157,7 +156,7 @@ class ClickwordsTest(ClickwordsMixin,
                      CreativesMixin, OrdersMixin, CampaignsMixin,
                      PlacementsMixin, WebsitesMixin,
                      LoginMixin,
-                     BaseMixin, TestCase):
+                     TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -182,7 +181,7 @@ class ClickwordsTest(ClickwordsMixin,
         self._campaign_delete(uuid=self.campaign_id)
         self._creative_delete(uuid=self.creative_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         ''' Deleting clickword '''
         data = self._clickword_delete(uuid=self.clickword_id)
@@ -196,7 +195,7 @@ class ClickwordsTest(ClickwordsMixin,
                      CreativesMixin, OrdersMixin, CampaignsMixin,
                      PlacementsMixin, WebsitesMixin,
                      LoginMixin,
-                     BaseMixin, TestCase):
+                     TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -223,7 +222,7 @@ class ClickwordsTest(ClickwordsMixin,
         self._clickword_delete(uuid=self.clickword_id)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         ''' List all clickwords '''
 
@@ -240,7 +239,7 @@ class ClickwordsTest(ClickwordsMixin,
                                u'expand': [ u'foo', ] })
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         ''' List single clickword '''
 
@@ -273,7 +272,7 @@ class ClickwordsTest(ClickwordsMixin,
 
 
 
-    @fake_requests
+    @httpretty.activate
     def test_update(self):
         ''' Updating clickword '''
 

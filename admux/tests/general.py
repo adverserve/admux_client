@@ -7,12 +7,11 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 
 class LoginMixin(object):
     credentials = ('strg', 'strg')
 
-    @fake_requests
+    @httpretty.activate
     def _login(self, *args, **kwargs):
         httpretty.register_uri(
             httpretty.POST,
@@ -25,12 +24,12 @@ class LoginMixin(object):
         return self.api_key
 
 
-class LoginTest(BaseMixin, LoginMixin, TestCase):
+class LoginTest(LoginMixin, TestCase):
 
     def setUp(self):
         self.api = Client()
 
-    @fake_requests
+    @httpretty.activate
     def test_login(self):
         """Login to Api-Service"""
 

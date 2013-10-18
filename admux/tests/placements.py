@@ -7,14 +7,13 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 from adserver.tests.websites import WebsitesMixin
 
 class PlacementsMixin(object):
     placement_id = None
 
-    @fake_requests
+    @httpretty.activate
     def _get_placements(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -48,7 +47,7 @@ class PlacementsMixin(object):
         return data
 
 class PlacementsTest(PlacementsMixin, WebsitesMixin, LoginMixin,
-                     BaseMixin, TestCase):
+                     TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -56,13 +55,13 @@ class PlacementsTest(PlacementsMixin, WebsitesMixin, LoginMixin,
         self._get_websites()
         self._get_placements()
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         data = self._get_placements()
         self.assertTrue(u'placements' in data)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         body = r'' \
             r'''

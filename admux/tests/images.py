@@ -10,7 +10,6 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 from adserver.tests.websites import WebsitesMixin
 from adserver.tests.placements import PlacementsMixin
@@ -21,7 +20,7 @@ from adserver.tests.creatives import CreativesMixin
 class ImagesMixin(object):
     image_id = None
 
-    @fake_requests
+    @httpretty.activate
     def _images_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -61,7 +60,7 @@ class ImagesMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _image_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -82,7 +81,7 @@ class ImagesMixin(object):
         data = api.image_delete(*args, **kwargs)
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _image_create(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -110,7 +109,7 @@ class AddImagesTest(ImagesMixin,
                     CreativesMixin, OrdersMixin, CampaignsMixin,
                     PlacementsMixin, WebsitesMixin,
                     LoginMixin,
-                    BaseMixin, TestCase):
+                    TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -134,7 +133,7 @@ class AddImagesTest(ImagesMixin,
         self._image_delete(uuid=self.image_id)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_create(self):
         ''' Creating image '''
 
@@ -158,7 +157,7 @@ class RemoveImagesTest(ImagesMixin,
                        CreativesMixin, OrdersMixin, CampaignsMixin,
                        PlacementsMixin, WebsitesMixin,
                        LoginMixin,
-                       BaseMixin, TestCase):
+                       TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -181,7 +180,7 @@ class RemoveImagesTest(ImagesMixin,
         self._creative_delete(uuid=self.creative_id)
         self._creative_delete(uuid=self.creative_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         ''' Deleting image '''
         data = self._image_delete(uuid=self.image_id)
@@ -196,7 +195,7 @@ class ImagesTest(ImagesMixin,
                  CreativesMixin, OrdersMixin, CampaignsMixin,
                  PlacementsMixin, WebsitesMixin,
                  LoginMixin,
-                 BaseMixin, TestCase):
+                 TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -221,7 +220,7 @@ class ImagesTest(ImagesMixin,
         self._creative_delete(uuid=self.creative_id)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         ''' Listing images '''
 
@@ -238,7 +237,7 @@ class ImagesTest(ImagesMixin,
                                u'expand': [ u'foo', ] })
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         ''' List details of single image '''
 
@@ -281,7 +280,7 @@ class ImagesTest(ImagesMixin,
         self.assertTrue(u'uuid' in data)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_update(self):
         body = r'' \
             r'''

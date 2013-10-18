@@ -8,7 +8,6 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 from adserver.tests.campaigns import CampaignsMixin
 from adserver.tests.orders import OrdersMixin
@@ -20,7 +19,7 @@ class CreativesMixin(object):
 
     creative_html = u'<p>Foo</p>'
 
-    @fake_requests
+    @httpretty.activate
     def _creatives_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -57,7 +56,7 @@ class CreativesMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _creative_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -78,7 +77,7 @@ class CreativesMixin(object):
         return api.creative_delete(uuid=self.creative_id)
 
 
-    @fake_requests
+    @httpretty.activate
     def _creative_create(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -105,7 +104,7 @@ class CreativesMixin(object):
 class AddCreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
                        PlacementsMixin, WebsitesMixin,
                        LoginMixin,
-                       BaseMixin, TestCase):
+                       TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -123,7 +122,7 @@ class AddCreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
         self._campaign_delete(uuid=self.campaign_id)
         self._creative_delete(uuid=self.creative_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_create(self):
         ''' Creating creative '''
         data = self._creative_create(uuid=self.campaign_id,
@@ -145,7 +144,7 @@ class AddCreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
 class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
                     PlacementsMixin, WebsitesMixin,
                     LoginMixin,
-                    BaseMixin, TestCase):
+                    TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -165,7 +164,7 @@ class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
         self._order_delete(uuid=self.order_id)
         self._campaign_delete(uuid=self.campaign_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         ''' Deleting creative '''
         data = self._creative_delete(uuid=self.creative_id)
@@ -178,7 +177,7 @@ class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
 class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
                     PlacementsMixin, WebsitesMixin,
                     LoginMixin,
-                    BaseMixin, TestCase):
+                    TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -196,7 +195,7 @@ class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
         self._order_delete(uuid=self.order_id)
         self._campaign_delete(uuid=self.campaign_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         data = self._creatives_list(uuid=self.campaign_id)
         self.assertTrue(u'creatives' in data)
@@ -212,7 +211,7 @@ class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
                                u'expand': [ u'clickwords,images', ] })
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         body = r'' \
             r'''
@@ -250,7 +249,7 @@ class CreativesTest(CreativesMixin, OrdersMixin, CampaignsMixin,
 
 
 
-    @fake_requests
+    @httpretty.activate
     def test_update(self):
         body = r'' \
             r'''

@@ -11,7 +11,6 @@ import httpretty
 from django.test import TestCase
 
 from adserver.client import Client
-from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 from adserver.tests.orders import OrdersMixin
 
@@ -23,7 +22,7 @@ class CampaignsMixin(object):
     campaign_type = u"closedClicks"
     invalid_campaign_type = u"invalid"
 
-    @fake_requests
+    @httpretty.activate
     def _campaigns_list(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -62,7 +61,7 @@ class CampaignsMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _campaign_delete(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -85,7 +84,7 @@ class CampaignsMixin(object):
 
         return data
 
-    @fake_requests
+    @httpretty.activate
     def _campaign_create(self, *args, **kwargs):
         body = r'' \
             r'''
@@ -110,7 +109,7 @@ class CampaignsMixin(object):
 
 
 class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
-                       BaseMixin, TestCase):
+                       TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -120,7 +119,7 @@ class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
     def tearDown(self):
         self._order_delete(uuid=self.order_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_create(self):
         """ Creating a simple campaign """
         data = self._campaign_create(uuid=self.order_id, name=self.campaign_name)
@@ -129,7 +128,7 @@ class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
 
         self.assertTrue(u'job' in data)
 
-    @fake_requests
+    @httpretty.activate
     def test_create_complex(self):
         """ Creating a complex campaign """
 
@@ -157,7 +156,7 @@ class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
             self.assertTrue(u'from_runtime' in request_body)
             self.assertTrue(u'to_runtime' in request_body)
 
-    @fake_requests
+    @httpretty.activate
     def test_create_invalid(self):
         """ reate campaign for invalid campaign-type """
 
@@ -170,7 +169,7 @@ class AddCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
 
 
 class RemoveCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
-                          BaseMixin, TestCase):
+                          TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -181,7 +180,7 @@ class RemoveCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
     def tearDown(self):
         self._order_delete(uuid=self.order_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_delete(self):
         """ Removing campaign """
         data = self._campaign_delete(uuid=self.campaign_id)
@@ -192,7 +191,7 @@ class RemoveCampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
 
 
 class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
-                    BaseMixin, TestCase):
+                    TestCase):
 
     def setUp(self):
         self.api = Client()
@@ -204,14 +203,14 @@ class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
         self._order_delete(uuid=self.order_id)
         self._campaign_delete(uuid=self.campaign_id)
 
-    @fake_requests
+    @httpretty.activate
     def test_list(self):
         """ Listing campaigns """
         data = self._campaigns_list(uuid=self.order_id)
         self.assertTrue(u'campaigns' in data)
 
 
-    @fake_requests
+    @httpretty.activate
     def test_detail(self):
         """ Listing one campaign """
         body = r'' \
@@ -248,7 +247,7 @@ class CampaignsTest(CampaignsMixin, OrdersMixin, LoginMixin,
 
 
 
-    @fake_requests
+    @httpretty.activate
     def test_update(self):
         """ Updating campaign """
 
