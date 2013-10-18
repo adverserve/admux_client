@@ -2,19 +2,22 @@
 import logging
 log = logging.getLogger(__name__)
 
+from datetime import datetime
+
 import json
 import httpretty
+from uuid import uuid4
 
 from django.test import TestCase
 
-from adserver.client import Client
+from adserver.client import Client, ProtocolClientError
 from adserver.tests.helpers import BaseMixin, fake_requests
 from adserver.tests.general import LoginMixin
 
 class OrdersMixin(object):
     order_id = None
 
-    order_name = u"test-order"
+    order_name = u"demo-order-%s" % uuid4()
     adition_id = 24
     agency_id = 25
     client_id = 26
@@ -101,10 +104,73 @@ class OrdersMixin(object):
         return api.order_delete(*args, **kwargs)
 
 
+class AddOrdersTest(OrdersMixin, LoginMixin,
+                    BaseMixin, TestCase):
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+
+    def tearDown(self):
+        try:
+            self._order_delete(self.order_id)
+        except ProtocolClientError:
+            pass
+
+    @fake_requests
+    def test_create(self):
+        """ Creating an Order """
+        data = self._order_create(name=self.order_name)
+        self.assertTrue(u'order' in data)
+        self.assertEquals(self.order_id, data[u'order'])
+
+        self.assertTrue(u'job' in data)
+
+
+
+    @fake_requests
+    def test_create_complex(self):
+        """ Creating a complex Order """
+        data = self._order_create(name=self.order_name,
+
+                                  adition_id=self.adition_id,
+                                  agency_id=self.agency_id,
+                                  client_id=self.client_id)
+        self.assertTrue(u'order' in data)
+        self.assertEquals(self.order_id, data[u'order'])
+
+        if httpretty.httpretty.is_enabled():
+            request_body = httpretty.last_request().body
+            request_body = json.loads(request_body)
+
+            self.assertTrue(u'adition_id' in request_body)
+            self.assertTrue(u'agency_id' in request_body)
+            self.assertTrue(u'client_id' in request_body)
+
+
+class RemoveOrdersTest(OrdersMixin, LoginMixin,
+                       BaseMixin, TestCase):
+    def setUp(self):
+        self.api = Client()
+        self._login(*self.credentials)
+
+        data = self._order_create(name=self.order_name)
+
+
+    @fake_requests
+    def test_delete(self):
+        """ Removing an Order """
+
+
+        data = self._order_delete(uuid=self.order_id)
+
+        self.assertTrue(u'message' in data)
+        self.assertEquals(u'Deleted', data[u'message'])
+
+        self.assertTrue(u'job' in data)
+
 
 class OrdersTest(OrdersMixin, LoginMixin,
                  BaseMixin, TestCase):
-
 
     def setUp(self):
         self.api = Client()
@@ -112,7 +178,7 @@ class OrdersTest(OrdersMixin, LoginMixin,
         self._order_create(name=self.order_name)
 
     def tearDown(self):
-        self._order_delete(self.order_id)
+        self._order_delete(uuid=self.order_id)
 
     @fake_requests
     def test_list(self):
@@ -149,57 +215,6 @@ class OrdersTest(OrdersMixin, LoginMixin,
         data = api.order(uuid=self.order_id)
         self.assertTrue(u'uuid' in data)
         self.assertEquals(self.order_id, data[u'uuid'])
-
-
-    @fake_requests
-    def test_delete(self):
-        """ Removing an Order """
-        data = self._order_delete(uuid=self.order_id)
-
-        self.assertTrue(u'message' in data)
-        self.assertEquals(u'Deleted', data[u'message'])
-
-        self.assertTrue(u'job' in data)
-
-
-    @fake_requests
-    def test_create(self):
-        """ Creating an Order """
-        self._order_delete(self.order_id)
-
-        data = self._order_create(name=self.order_name)
-        self.assertTrue(u'order' in data)
-        self.assertEquals(self.order_id, data[u'order'])
-
-        self.assertTrue(u'job' in data)
-
-        # house-keeping
-        self._order_delete(self.order_id)
-
-
-    @fake_requests
-    def test_create_complex(self):
-        """ Creating a complex Order """
-        self._order_delete(self.order_id)
-
-        data = self._order_create(name=self.order_name,
-
-                                  adition_id=self.adition_id,
-                                  agency_id=self.agency_id,
-                                  client_id=self.client_id)
-        self.assertTrue(u'order' in data)
-        self.assertEquals(self.order_id, data[u'order'])
-
-        if httpretty.httpretty.is_enabled():
-            request_body = httpretty.last_request().body
-            request_body = json.loads(request_body)
-
-            self.assertTrue(u'adition_id' in request_body)
-            self.assertTrue(u'agency_id' in request_body)
-            self.assertTrue(u'client_id' in request_body)
-
-        # house-keeping
-        self._order_delete(self.order_id)
 
 
     @fake_requests
