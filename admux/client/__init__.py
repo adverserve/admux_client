@@ -13,6 +13,17 @@ from adserver.client import helpers
 class ProtocolError(Exception):
     pass
 
+class ProtocolClientError(ProtocolError):
+    pass
+
+class ProtocolResourceError(ProtocolError):
+    pass
+
+class ProtocolPermissionError(ProtocolError):
+    pass
+
+
+
 class Client(websites.WebsitesClientMixin,
              placements.PlacementsClientMixin,
              orders.OrdersClientMixin,
@@ -46,7 +57,7 @@ class Client(websites.WebsitesClientMixin,
         headers.update(self.default_headers)
 
         if requires_api_key and not self.api_key:
-            raise ProtocolError("API Key not set for client session. ' \
+            raise ProtocolClientError("API Key not set for client session. ' \
             'Try calling `login()` first.")
         if self.api_key:
             headers['Api-Key'] = self.api_key
@@ -72,12 +83,16 @@ class Client(websites.WebsitesClientMixin,
                  resp.status_code,
                  resp.text)
 
+        data = resp.json()
         if resp.status_code == 400:
-            error_info = resp.json()
-            raise ProtocolError(error_info['error'])
+            raise ProtocolClientError(data['error'])
+        if resp.status_code == 403:
+            raise ProtocolPermissionError(data['error'])
+        if resp.status_code == 404:
+            raise ProtocolResourceError(data['error'])
 
         resp.raise_for_status()
-        return resp.json()
+        return data
 
     # Login
     # =====
