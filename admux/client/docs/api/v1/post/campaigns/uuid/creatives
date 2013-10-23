@@ -1,0 +1,123 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AdMux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="../../../../../css/bootstrap.min.css" rel="stylesheet">
+<link href="../../../../../css/jquery-ui.min.css" rel="stylesheet">
+    <script src="../../../../../../js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../../../../../js/jquery.min.js" type="text/javascript"></script>
+<script src="../../../../../../js/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="../../../../../css/all.css" rel="stylesheet">
+
+    <!-- IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+              <p class="navbar-text pull-right">
+
+
+
+              </p>
+
+              <ul class="nav">
+
+                      <li><a href="../../../../../index.html">Documentation</a></li>
+
+              </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+
+
+    <p>
+            <a href="../../../../v1.1" class="btn btn-primary"><i class="icon-chevron-up icon-white"></i> API v1 Documentation</a>
+    </p>
+
+    <div class="page-header">
+        <h1>POST /v1/campaigns/:uuid/creatives</h1>
+    </div>
+
+<p>Creates a new creative for the campaign. Requires API key
+authentication. The campaign must belong to the user.</p>
+
+    <p>This action creates a job that will asynchronously perform the corresponding
+    action in Adition. The job UUID is returned in the response.</p>
+
+<h4>Parameters</h4>
+
+        <table class="table table-striped">
+      <tbody>    <tr>
+      <td>
+          <p><b>html</b><br />
+          required</p>
+      </td>
+      <td>
+          <p>The HTML for the creative.</p>          <p><b>Example Value:</b> <tt>&lt;p&gt;Foo&lt;/p&gt;</tt></p>
+      </td>
+    </tr>    <tr>
+      <td>
+          <p><b>placement</b><br />
+          required</p>
+      </td>
+      <td>
+          <p>The UUID of the creative's placement.</p>          <p><b>Example Value:</b> <tt>FC1EFACE-11AC-11E3-9DA9-61167FA36B44</tt></p>
+      </td>
+    </tr>          </tbody>
+    </table>
+
+<h4>Example Request</h4>
+
+        <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td><b>POST</b></td>
+          <td><tt>/v1/campaigns/C9784D1A-1322-11E3-9E33-96237FA36B44/creatives</tt></td>
+        </tr>
+        <tr>
+          <td><b>Content-Type</b></td>
+          <td>application/json</td>
+        </tr>
+        <tr>
+          <td><b>POST Data</b></td>
+          <td><tt>{
+   "html" : "\u003cp\u003eFoo\u003c/p\u003e",
+   "placement" : "CA4AB610-1322-11E3-9E33-96237FA36B44",
+   "name" : "New creative"
+}
+</tt></td>
+        </tr>
+          </tbody>
+    </table>
+
+<pre>
+{
+   &quot;creative&quot; : &quot;CAAB59D4-1322-11E3-9E33-96237FA36B44&quot;,
+   &quot;job&quot; : &quot;CAABF1B4-1322-11E3-9E33-96237FA36B44&quot;
+}
+</pre>
+
+
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
+

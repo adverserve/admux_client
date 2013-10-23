@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AdMux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/jquery-ui.min.css" rel="stylesheet">
+    <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../js/jquery.min.js" type="text/javascript"></script>
+<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="css/all.css" rel="stylesheet">
+
+    <!-- IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+              <p class="navbar-text pull-right">
+
+
+
+              </p>
+
+              <ul class="nav">
+
+
+                      <li><a href="index.html">Documentation</a></li>
+
+              </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+
+
+
+<p>
+    <a href="index.html" class="btn btn-primary"><i class="icon-arrow-left icon-white"></i> Documentation</a>
+</p>
+
+<div class="page-header">
+    <h1>Database Schema</h1>
+</div>
+
+<p>Jump to <a href="database#objects">object</a> descriptions.</p>
+
+<img src="images/db-diagram.png">
+
+<h2><a name="objects">Objects</a></h2>
+
+<ul>
+
+<li><b>Users</b> have <b>websites</b>, for example, <code>Kurier</code>.</li>
+
+<li><b>Websites</b> have <b>placements</b>. A placement is an area within a web
+page in which a creative can be displayed. The placement has a name like
+<code>Bildung Advertorial</code>, a width and a height.
+
+<li>Users also have <b>orders</b>. An order contains one or more
+campaigns.</li>
+
+<li>A <b>campaign</b> has one or more creatives. A <b>creative</b> is
+associated with a placement and has an HTML string and a list of
+<b>clickwords</b> and <b>images</b>.</li>
+
+<li>When a campaign is deployed, several campaigns are created on the Adition
+server; this has to do with statistics. These internal campaigns are stored as
+<b>adition campaigns</b>.</li>
+
+<li>Creating, updating or deleting an order, campaign, creative, clickword or
+image on the Adition server happens asynchronously. For each such action a
+<b>job</b> is generated.</li>
+
+</ul>
+
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
+

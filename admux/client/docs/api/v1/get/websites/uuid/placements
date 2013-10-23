@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AdMux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="../../../../../css/bootstrap.min.css" rel="stylesheet">
+<link href="../../../../../css/jquery-ui.min.css" rel="stylesheet">
+    <script src="../../../../../../js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../../../../../js/jquery.min.js" type="text/javascript"></script>
+<script src="../../../../../../js/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="../../../../../css/all.css" rel="stylesheet">
+
+    <!-- IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+              <p class="navbar-text pull-right">
+
+
+
+              </p>
+
+              <ul class="nav">
+
+
+                      <li><a href="../../../../../index.html">Documentation</a></li>
+
+              </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+
+
+    <p>
+            <a href="../../../../v1.1" class="btn btn-primary"><i class="icon-chevron-up icon-white"></i> API v1 Documentation</a>
+    </p>
+
+    <div class="page-header">
+        <h1>GET /v1/websites/:uuid/placements</h1>
+    </div>
+
+<p>Returns a list of placements for the websites. Requires API key
+authentication. The websites must belong to the user</p>
+
+<h4>Parameters</h4>
+
+            <table class="table table-striped">
+      <tbody>
+            <tr>
+      <td>
+          <p><b>links</b><br />
+          optional</p>
+      </td>
+      <td>
+          <p>
+            Show links for each order entity as well as for each expanded entity.
+        </p>          <p><b>Example Value:</b> <tt>1</tt></p>
+      </td>
+    </tr>
+            <tr>
+      <td>
+          <p><b>expand</b><br />
+          optional</p>
+      </td>
+      <td>
+          <p>
+            A comma-separated list of entity types that should be expanded. The
+            exact key names correspond to the response field names. Unknown entity
+            types will be ignored.
+        </p>          <p><b>Example Value:</b> <tt>foobar</tt></p>
+      </td>
+    </tr>
+              </tbody>
+    </table>
+
+<h4>Example Request</h4>
+
+        <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td><b>GET</b></td>
+          <td><tt>/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44/placements?links=1</tt></td>
+        </tr>
+          </tbody>
+    </table>
+
+<pre>
+{
+   &quot;placements&quot; : [
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Inland Teaser&quot;,
+         &quot;uuid&quot; : &quot;C96B4228-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96B4228-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      },
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Wirtschaft Teaser&quot;,
+         &quot;uuid&quot; : &quot;C96BE5DE-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96BE5DE-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      },
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Kultur Teaser&quot;,
+         &quot;uuid&quot; : &quot;C96C849E-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96C849E-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      },
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Inland Advertorial&quot;,
+         &quot;uuid&quot; : &quot;C96D3574-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96D3574-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      },
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Wirtschaft Advertorial&quot;,
+         &quot;uuid&quot; : &quot;C96DC688-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96DC688-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      },
+      {
+         &quot;width&quot; : 600,
+         &quot;name&quot; : &quot;Kultur Advertorial&quot;,
+         &quot;uuid&quot; : &quot;C96E503A-1322-11E3-9E33-96237FA36B44&quot;,
+         &quot;height&quot; : 200,
+         &quot;created&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;adition_id&quot; : null,
+         &quot;updated&quot; : &quot;2013-09-01T16:23:08.000000Z&quot;,
+         &quot;links&quot; : [
+            {
+               &quot;rel&quot; : &quot;self&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/placements/C96E503A-1322-11E3-9E33-96237FA36B44&quot;
+            },
+            {
+               &quot;rel&quot; : &quot;up&quot;,
+               &quot;href&quot; : &quot;http://admux-demo.trust-box.at/v1/websites/C96A9030-1322-11E3-9E33-96237FA36B44&quot;
+            }
+         ]
+      }
+   ]
+}
+</pre>
+
+
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
+

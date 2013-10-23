@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AdMux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+<link href="../css/jquery-ui.min.css" rel="stylesheet">
+    <script src="../../js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../js/jquery.min.js" type="text/javascript"></script>
+<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="../css/all.css" rel="stylesheet">
+
+    <!-- IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+              <p class="navbar-text pull-right">
+
+
+
+              </p>
+
+              <ul class="nav">
+
+
+                      <li><a href="../index.html">Documentation</a></li>
+
+              </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+
+
+
+<p>
+        <a href="../index.html" class="btn btn-primary"><i class="icon-chevron-up icon-white"></i> Documentation</a>
+</p>
+
+<div class="page-header">
+    <h1>API v1 Documentation</h1>
+</div>
+
+<h4>Users</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/post/login">POST /v1/login</a></td>
+      <td>Takes a username and a password and returns that user's API key.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Websites</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/websites/list">GET /v1/websites</a></td>
+      <td>Return a list of websites belonging to the user.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/websites/uuid/detail">GET /v1/websites/:uuid</a></td>
+      <td>Return a specific website.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Placements</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/websites/uuid/placements">GET /v1/websites/:uuid/placements</a></td>
+      <td>Return a list of placements belonging to the website.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/placements/uuid">GET /v1/placements/:uuid</a></td>
+      <td>Return a specific placement.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Orders</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/orders/list">GET /v1/orders</a></td>
+      <td>Return a list of orders belonging to the user.</td>
+    </tr>    <tr>
+      <td><a href="v1/post/orders">POST /v1/orders</a></td>
+      <td>Create a new order.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/orders/uuid/detail">GET /v1/orders/:uuid</a></td>
+      <td>Return a specific order.</td>
+    </tr>    <tr>
+      <td><a href="v1/put/orders/uuid">PUT /v1/orders/:uuid</a></td>
+      <td>Update an order.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/orders/uuid">DELETE /v1/orders/:uuid</a></td>
+      <td>Delete an order.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Campaigns</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/orders/uuid/campaigns">GET /v1/orders/:uuid/campaigns</a></td>
+      <td>Return a list of campaigns belonging to the order.</td>
+    </tr>    <tr>
+      <td><a href="http://admux-demo.trust-box.at//api/v1/post/orders/uuid/campaigns">POST /v1/orders/:uuid/campaigns</a></td>
+      <td>Create a new campaign for the order.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/campaigns/uuid">GET /v1/campaigns/:uuid</a></td>
+      <td>Return a specific campaign.</td>
+    </tr>    <tr>
+      <td><a href="v1/put/campaigns/uuid">PUT /v1/campaigns/:uuid</a></td>
+      <td>Update a campaign.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/campaigns/uuid">DELETE /v1/campaigns/:uuid</a></td>
+      <td>Delete a campaign.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Creatives</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/campaigns/uuid/creatives">GET /v1/campaigns/:uuid/creatives</a></td>
+      <td>Return a list of creatives belonging to the campaign.</td>
+    </tr>    <tr>
+      <td><a href="v1/post/campaigns/uuid/creatives">POST /v1/campaigns/:uuid/creatives</a></td>
+      <td>Create a new creative for the campaign.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/creatives/uuid/list">GET /v1/creatives/:uuid</a></td>
+      <td>Return a specific creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/put/creatives/uuid">PUT /v1/creatives/:uuid</a></td>
+      <td>Update a creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/creatives/uuid">DELETE /v1/creatives/:uuid</a></td>
+      <td>Delete a creative.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Clickwords</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/creatives/uuid/clickwords">GET /v1/creatives/:uuid/clickwords</a></td>
+      <td>Return a list of clickwords belonging to the creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/post/creatives/uuid/clickwords">POST /v1/creatives/:uuid/clickwords</a></td>
+      <td>Create a new clickword for the creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/clickwords/uuid">GET /v1/clickwords/:uuid</a></td>
+      <td>Return a specific clickword.</td>
+    </tr>    <tr>
+      <td><a href="v1/put/clickwords/uuid">PUT /v1/clickwords/:uuid</a></td>
+      <td>Update a clickword.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/clickwords/uuid">DELETE /v1/clickwords/:uuid</a></td>
+      <td>Delete a clickword.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Images</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/creatives/uuid/images">GET /v1/creatives/:uuid/images</a></td>
+      <td>Return a list of images belonging to the creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/post/creatives/uuid/images">POST /v1/creatives/:uuid/images</a></td>
+      <td>Create a new image for the creative.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/images/uuid">GET /v1/images/:uuid</a></td>
+      <td>Return a specific image.</td>
+    </tr>    <tr>
+      <td><a href="v1/put/images/uuid">PUT /v1/images/:uuid</a></td>
+      <td>Update an image.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/images/uuid">DELETE /v1/images/:uuid</a></td>
+      <td>Delete an image.</td>
+    </tr>      </tbody>
+    </table>
+
+<h4>Jobs</h4>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>    <tr>
+      <td><a href="v1/get/jobs/list">GET /v1/jobs</a></td>
+      <td>Return a list of jobs belonging to the user.</td>
+    </tr>    <tr>
+      <td><a href="v1/get/jobs/uuid">GET /v1/jobs/:uuid</a></td>
+      <td>Return a specific job.</td>
+    </tr>    <tr>
+      <td><a href="v1/delete/jobs/uuid">DELETE /v1/jobs/:uuid</a></td>
+      <td>Delete a job.</td>
+    </tr>      </tbody>
+    </table>
+
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
+
