@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from django.test import TestCase
 
-from adserver.client import Client, ProtocolClientError
+from adserver.admux.client import Client, ProtocolClientError
 from adserver.tests.general import LoginMixin
 
 class OrdersMixin(object):

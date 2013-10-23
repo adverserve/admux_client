@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from adserver.client import helpers
+from adserver.admux import helpers
 
 
 class JobsClientMixin(object):

@@ -6,7 +6,7 @@ import httpretty
 
 from django.test import TestCase
 
-from adserver.client import Client
+from adserver.admux.client import Client
 
 class LoginMixin(object):
     credentials = ('strg', 'strg')

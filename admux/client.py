@@ -6,9 +6,9 @@ import json
 import requests
 from pprint import pprint
 
-from adserver.client import websites, placements, orders, \
+from adserver.admux.mixins import websites, placements, orders, \
      campaigns, creatives, clickwords, images, jobs
-from adserver.client import helpers
+from adserver.admux import helpers
 
 class ProtocolError(Exception):
     pass

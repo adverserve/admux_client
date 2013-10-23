@@ -6,7 +6,7 @@ import httpretty
 
 from django.test import TestCase
 
-from adserver.client import Client
+from adserver.admux.client import Client
 from adserver.tests.general import LoginMixin
 from adserver.tests.websites import WebsitesMixin
 
