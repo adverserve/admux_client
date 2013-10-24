@@ -4,11 +4,10 @@ log = logging.getLogger(__name__)
 
 import json
 import requests
-from pprint import pprint
 
-from adserver.admux.mixins import websites, placements, orders, \
+from mixins import websites, placements, orders, \
      campaigns, creatives, clickwords, images, jobs
-from adserver.admux import helpers
+import helpers
 
 class ProtocolError(Exception):
     pass
@@ -117,28 +116,3 @@ class Client(websites.WebsitesClientMixin,
         return self.api_key
 
 
-
-
-if __name__ == '__main__':
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    ch.setFormatter(formatter)
-    log.addHandler(ch)
-
-    log.setLevel(logging.DEBUG)
-
-    c = Client()
-    try:
-        c.login(username='strg', password='strg')
-
-        data = c.websites()
-
-        website_uuid = data.get('websites', [ {}, ])[0].get('uuid')
-        pprint(c.placement("953E93A6-0968-11E3-877B-F091A39B799E"))
-
-    except requests.exceptions.HTTPError, e:
-        log.error('Request failed.')
