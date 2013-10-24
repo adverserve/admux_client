@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 import requests
 from pprint import pprint
 
-from client import Client
+from admux.client import Client
 
 if __name__ == '__main__':
     ch = logging.StreamHandler()

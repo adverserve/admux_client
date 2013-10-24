@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import helpers
+from admux import helpers
 
 
 class WebsitesClientMixin(object):

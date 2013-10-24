@@ -5,9 +5,9 @@ log = logging.getLogger(__name__)
 import json
 import requests
 
-from mixins import websites, placements, orders, \
+from admux.mixins import websites, placements, orders, \
      campaigns, creatives, clickwords, images, jobs
-import helpers
+from admux import helpers
 
 class ProtocolError(Exception):
     pass
